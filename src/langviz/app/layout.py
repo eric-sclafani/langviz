@@ -1,14 +1,7 @@
-#!/usr/bin/env python3
-"""
-This file contains the main application code
-"""
-
 import dash_bootstrap_components as dbc
-import pandas as pd
-from dash import Dash, Input, Output, State, dcc, html
+from dash import dcc, html
 
 from .components.tabs.about import about_tab
-from .components.tabs.get_started import get_started_tab
 
 ACTIVE_TAB_CLASS_NAME = "fw-bold fst-italic"
 ABOUT_PAGE_CARD_COLOR = "#E8E8E8"
@@ -17,7 +10,6 @@ ABOUT_PAGE_CARD_COLOR = "#E8E8E8"
 tabs = dbc.Tabs(
     [
         about_tab,
-        get_started_tab,
         dbc.Tab(
             label="Corpus",
             activeTabClassName=ACTIVE_TAB_CLASS_NAME,
@@ -45,14 +37,8 @@ header = dbc.Container(
     [
         html.H1("Langviz"),
         tabs,
+        dbc.Button("Click me", id="test-button"),
+        html.Div(id="test-div"),
     ],
     fluid=True,
 )
-
-
-def run_app(input_path: str):
-    """Runs the application"""
-    app = Dash(__name__, external_stylesheets=[dbc.themes.MORPH], title="Langviz")
-    app.layout = html.Div([header])
-    print(input_path)
-    app.run(debug=True)

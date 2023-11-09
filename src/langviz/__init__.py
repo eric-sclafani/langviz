@@ -3,7 +3,7 @@ This file contains the function that gets called from the command line
 """
 import argparse
 
-from . import app
+from langviz.app import run_app
 
 
 def langviz():
@@ -17,5 +17,4 @@ def langviz():
     )
 
     args = parser.parse_args()
-
-    app.run_app(args.input_path)
+    run_app(args.input_path)

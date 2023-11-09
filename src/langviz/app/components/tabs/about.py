@@ -13,6 +13,19 @@ Langviz is an open-source corpus visualization tool
 """
 
 
+#
+# _layout = html.Div(
+#     [
+#         dbc.Stack(
+#             [
+#                 html.H2("To get started, upload your data below"),
+#                 html.Div(id="test-div"),
+#             ]
+#         )
+#     ]
+# )
+#
+
 _layout = html.Div(
     [
         dbc.Row(
