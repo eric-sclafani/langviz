@@ -37,8 +37,6 @@ header = dbc.Container(
     [
         html.H1("Langviz"),
         tabs,
-        dbc.Button("Click me", id="test-button"),
-        html.Div(id="test-div"),
     ],
     fluid=True,
 )
