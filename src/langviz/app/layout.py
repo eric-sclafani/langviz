@@ -1,6 +1,7 @@
 import dash_bootstrap_components as dbc
 from dash import dcc, html
 
+from . import data_loader
 from .components.tabs.about import about_tab
 
 ACTIVE_TAB_CLASS_NAME = "fw-bold fst-italic"
@@ -26,7 +27,6 @@ tabs = dbc.Tabs(
             label="Sentence",
             activeTabClassName=ACTIVE_TAB_CLASS_NAME,
             disabled=True,
-            id="sentence-tab",
         ),
     ],
     className="main-tabs",
