@@ -56,7 +56,7 @@ MOTIVATION_CARD = make_card(
 
 LINKS_BODY = [
     html.Div("Check out these cool links", className="links-subheader"),
-    make_link("Source code", "https://www.google.com/"),
+    make_link("Source code", "https://github.com/eric-sclafani/langviz"),
     html.Br(),
     make_link("My GitHub", "https://github.com/eric-sclafani"),
 ]
