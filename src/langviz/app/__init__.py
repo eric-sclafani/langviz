@@ -1,7 +1,7 @@
 import dash_bootstrap_components as dbc
 from dash import Dash, html
 
-from . import callbacks, data_loader, layout
+from . import callbacks
 
 
 def run_app(input_path: str) -> None:
@@ -9,7 +9,6 @@ def run_app(input_path: str) -> None:
 
     app = Dash(__name__, external_stylesheets=[dbc.themes.MORPH])
 
-    data = data_loader.load_dataset(input_path)
-    app.layout = layout.layout(data)
+    app.layout = layout.layout(input_path)
     callbacks.get_callbacks(app)
     app.run(debug=True)
