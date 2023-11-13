@@ -1,13 +1,13 @@
 import dash_bootstrap_components as dbc
+import pandas as pd
 from dash import dcc, html
 
-from . import data_loader
 from .components.tabs.about import about_tab
 
 ACTIVE_TAB_CLASS_NAME = "fw-bold fst-italic"
 ABOUT_PAGE_CARD_COLOR = "#E8E8E8"
 
-
+# will be added to components.tabs.__init__.py
 tabs = dbc.Tabs(
     [
         about_tab,
@@ -33,10 +33,11 @@ tabs = dbc.Tabs(
 )
 
 
-header = dbc.Container(
-    [
-        html.H1("Langviz"),
-        tabs,
-    ],
-    fluid=True,
-)
+def layout(data: pd.DataFrame):
+    return dbc.Container(
+        [
+            html.H1("Langviz"),
+            tabs,
+        ],
+        fluid=True,
+    )
