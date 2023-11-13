@@ -8,20 +8,18 @@ from dash import dcc, html
 
 
 def make_card(
-    header_text: str,
+    header,
     body: List,
     header_classname="",
     body_classname="",
-    component_id="",
 ):
     """Creates a Card component"""
     return dbc.Card(
         [
-            dbc.CardHeader(html.H1(header_text), className=header_classname),
+            dbc.CardHeader(header, className=header_classname),
             dbc.CardBody(body, className=body_classname),
         ],
         color="#E8E8E8",
-        id=component_id,
     )
 
 
@@ -43,7 +41,7 @@ from text data. Designed to be used in the beginning of the NLP pipeline, this t
 """
 
 DESCRIPTION_CARD = make_card(
-    "What is Langviz",
+    html.H1("What is Langviz"),
     [DESCRIPTION_TEXT],
 )
 
@@ -54,7 +52,7 @@ directly corresponds to the quality of the output (garbage in, garbage out).
 """
 
 MOTIVATION_CARD = make_card(
-    "Motivation",
+    html.H1("Motivation"),
     [MOTIVATION_TEXT],
 )
 
@@ -69,7 +67,7 @@ LINKS_BODY = [
 ]
 
 LINKS_CARD = make_card(
-    "Links!",
+    html.H1("Links!"),
     LINKS_BODY,
 )
 
@@ -80,7 +78,7 @@ apply optional text cleaning, yada yada yada...
 """
 
 GET_STARTED_CARD = make_card(
-    "Get started",
+    html.H1("Get started"),
     [GET_STARTED_TEXT],
 )
 
