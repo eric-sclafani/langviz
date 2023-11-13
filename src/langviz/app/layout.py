@@ -1,3 +1,5 @@
+from typing import Union
+
 import dash_bootstrap_components as dbc
 import pandas as pd
 from dash import dcc, html
@@ -33,7 +35,7 @@ tabs = dbc.Tabs(
 )
 
 
-def layout(data: pd.DataFrame):
+def layout(data: Union[pd.DataFrame, None]):
     return dbc.Container(
         [
             html.H1("Langviz"),

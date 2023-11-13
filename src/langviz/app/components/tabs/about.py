@@ -7,7 +7,13 @@ import dash_bootstrap_components as dbc
 from dash import dcc, html
 
 
-def make_card(header_text: str, body: List, header_classname="", body_classname=""):
+def make_card(
+    header_text: str,
+    body: List,
+    header_classname="",
+    body_classname="",
+    component_id="",
+):
     """Creates a Card component"""
     return dbc.Card(
         [
@@ -15,6 +21,7 @@ def make_card(header_text: str, body: List, header_classname="", body_classname=
             dbc.CardBody(body, className=body_classname),
         ],
         color="#E8E8E8",
+        id=component_id,
     )
 
 
@@ -76,6 +83,25 @@ GET_STARTED_CARD = make_card(
     "Get started",
     [GET_STARTED_TEXT],
 )
+
+# DATA LOADING
+
+COLUMN_INPUT = html.Div(
+    [
+        dbc.Label("Column", html_for="text-column-input"),
+        dbc.Input(id="text-column-input", placeholder="Enter column name"),
+        dbc.FormText(
+            "This column should contain all the language data you want to analyze",
+            color="secondary",
+        ),
+    ]
+)
+
+DATA_LOAD_STATUS_CARD = make_card(
+    "Data loading status",
+    [],
+)
+
 
 ### TEXT CLEANING
 
