@@ -19,18 +19,23 @@ def langviz():
         description="CLI command for running the Langviz software"
     )
     parser.add_argument(
-        "-p",
+        "-i",
         "--input_path",
         help="Path to input data. Currently supported formats: .csv, .json, .jsonl",
         required=True,
     )
-
+    parser.add_argument(
+        "-c",
+        "--column_name",
+        help="Name of column housing language data to analyze",
+        required=True,
+    )
     args = parser.parse_args()
     path = args.input_path
 
     if not is_valid_path(path):
         raise RuntimeError(
-            f"Unsupported format detected in path '{path}'. Currently supported formats: .csv, .json, .jsonl"
+            f"Unsupported format in path '{path}'. Currently supported formats: .csv, .json, .jsonl"
         )
 
     run_app(path)

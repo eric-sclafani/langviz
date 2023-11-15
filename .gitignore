@@ -131,3 +131,4 @@ dmypy.json
 data/
 .virtual_documents
 notebooks/
+.DS_Store

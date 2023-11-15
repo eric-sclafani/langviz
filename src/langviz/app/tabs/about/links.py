@@ -27,5 +27,6 @@ def links_card():
                     make_link("My GitHub", "https://github.com/eric-sclafani"),
                 ]
             ),
-        ]
+        ],
+        color="#E8E8E8",
     )
