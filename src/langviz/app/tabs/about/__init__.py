@@ -3,7 +3,7 @@ This module contains code for the 'About' tab
 """
 
 import dash_bootstrap_components as dbc
-from dash import dcc, html
+from dash import html
 
 from . import description, links, motivation
 

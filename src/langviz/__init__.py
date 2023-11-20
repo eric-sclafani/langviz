@@ -8,7 +8,12 @@ from langviz.app import run_app
 
 def is_valid_path(path: str) -> bool:
     """Checks if provided path is an accepted formed"""
-    if path.endswith(".csv") or path.endswith(".json") or path.endswith(".jsonl"):
+    if (
+        path.endswith(".csv")
+        or path.endswith(".json")
+        or path.endswith(".jsonl")
+        or path.endswith(".xlsx")
+    ):
         return True
     return False
 
@@ -21,7 +26,7 @@ def langviz():
     parser.add_argument(
         "-i",
         "--input_path",
-        help="Path to input data. Currently supported formats: .csv, .json, .jsonl",
+        help="Path to input data",
         required=True,
     )
     parser.add_argument(
@@ -34,8 +39,6 @@ def langviz():
     path = args.input_path
 
     if not is_valid_path(path):
-        raise RuntimeError(
-            f"Unsupported format in path '{path}'. Currently supported formats: .csv, .json, .jsonl"
-        )
+        raise RuntimeError(f"Unsupported format in path '{path}'")
 
     run_app(path)
