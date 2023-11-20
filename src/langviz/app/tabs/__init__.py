@@ -7,7 +7,7 @@ from dash import dcc, html
 from . import about, corpus, document, sentence
 
 
-def layout(data: pd.DataFrame) -> dbc.Container:
+def layout(data: pd.Series) -> dbc.Container:
     return dbc.Container(
         [
             html.H1("Langviz"),

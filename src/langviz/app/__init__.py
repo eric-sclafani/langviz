@@ -2,14 +2,14 @@
 
 import dash_bootstrap_components as dbc
 import pandas as pd
-from dash import Dash, html
+from dash import Dash
 
 from . import callbacks
 from .tabs import layout
 
 
-def run_app(data: pd.DataFrame) -> None:
-    """Runs the application"""
+def run_app(data: pd.Series) -> None:
+    """Runs the application and passes the data into it"""
 
     app = Dash(__name__, external_stylesheets=[dbc.themes.MORPH])
     app.layout = layout(data)
