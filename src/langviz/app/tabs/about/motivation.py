@@ -3,11 +3,11 @@ from dash import html
 
 MOTIVATION_TEXT = """
 Data EDA is an essential part of the machine learning pipeline because what data you feed into a machine
-directly corresponds to the quality of the output (garbage in, garbage out). 
+directly corresponds to the quality of the output (garbage in, garbage out)... 
 """
 
 
-def motivation_card() -> dbc.Card:
+def motivation_card(card_color: str) -> dbc.Card:
     """Returns the 'Motivation' card inside the 'About' tab"""
     return dbc.Card(
         [
@@ -16,5 +16,5 @@ def motivation_card() -> dbc.Card:
                 [MOTIVATION_TEXT],
             ),
         ],
-        color="#E8E8E8",
+        color=card_color,
     )

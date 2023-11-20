@@ -7,15 +7,17 @@ from dash import html
 
 from . import description, links, motivation
 
+CARD_COLOR = "#E8E8E8"
+
 
 def _about_tab_layout():
     return html.Div(
         [
             dbc.Stack(
                 [
-                    description.description_card(),
-                    motivation.motivation_card(),
-                    links.links_card(),
+                    description.description_card(CARD_COLOR),
+                    motivation.motivation_card(CARD_COLOR),
+                    links.links_card(CARD_COLOR),
                 ],
             )
         ],

@@ -12,7 +12,7 @@ def make_link(link_text: str, url: str):
     )
 
 
-def links_card():
+def links_card(card_color: str):
     """Returns the 'Links' card inside the 'About' tab"""
     return dbc.Card(
         [
@@ -28,5 +28,5 @@ def links_card():
                 ]
             ),
         ],
-        color="#E8E8E8",
+        color=card_color,
     )

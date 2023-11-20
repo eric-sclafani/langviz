@@ -3,12 +3,13 @@ from dash import html
 
 DESCRIPTION_TEXT = """
 Langviz is a corpus analysis toolkit for observing useful statistics and linguistic information 
-from text data. Designed to be used in the beginning of the NLP pipeline, this tool provides 
+from text data... 
+
 
 """
 
 
-def description_card():
+def description_card(card_color: str):
     """Returns the 'Description' card inside the 'About' tab"""
     return dbc.Card(
         [
@@ -17,5 +18,5 @@ def description_card():
                 [DESCRIPTION_TEXT],
             ),
         ],
-        color="#E8E8E8",
+        color=card_color,
     )
