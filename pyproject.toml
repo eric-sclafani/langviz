@@ -2,6 +2,9 @@
 name = "langviz"
 version = "0.1"
 description = "A package for visualizing language data"
+authors = [{name="Eric Sclafani", email="eric.sclafani321@gmail.com"}]
+readme="README.md"
+dependencies=["pandas", "plotly", "dash", "dash-bootstrap-components", "spacy"]
 
 
 [project.scripts]

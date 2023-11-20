@@ -60,7 +60,7 @@ def langviz():
     path = args.input_path
     column_name = args.column_name
 
-    print(f"Loading data from path: '{path}'")
+    # print(f"Loading data from path: '{path}'")
     df = data_loader(path)
     text_data = extract_text_column_data(df, column_name)
 
