@@ -5,7 +5,7 @@ import pandas as pd
 from dash import Dash
 
 from . import callbacks
-from .tabs import layout
+from .layout import layout
 
 
 def run_app(data: pd.Series) -> None:

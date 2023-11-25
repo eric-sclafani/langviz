@@ -6,7 +6,7 @@ import argparse
 
 import pandas as pd
 
-from langviz.app import run_app
+from .app import run_app
 
 
 def data_loader(path: str) -> pd.DataFrame:
@@ -36,7 +36,9 @@ def extract_text_column_data(data: pd.DataFrame, column_name: str) -> pd.Series:
 
     if column_name in data.columns:
         return data[column_name]
-    raise RuntimeError(f"Column '{column_name}' not found in provided data")
+    raise RuntimeError(
+        f"Column '{column_name}' not found in provided data. Existing columns: {list(data.columns)}"
+    )
 
 
 def langviz():
@@ -60,7 +62,7 @@ def langviz():
     path = args.input_path
     column_name = args.column_name
 
-    # print(f"Loading data from path: '{path}'")
+    print("hello")
     df = data_loader(path)
     text_data = extract_text_column_data(df, column_name)
 
