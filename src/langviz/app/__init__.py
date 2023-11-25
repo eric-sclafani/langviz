@@ -4,7 +4,7 @@ import dash_bootstrap_components as dbc
 import pandas as pd
 from dash import Dash
 
-from . import callbacks
+from . import callbacks, processing
 from .layout import layout
 
 
