@@ -4,9 +4,11 @@ This file contains the function that gets called from the command line
 
 import argparse
 
+import dash_bootstrap_components as dbc
 import pandas as pd
+from dash import Dash
 
-from .app import run_app
+from . import callbacks, layout
 
 
 def data_loader(path: str) -> pd.DataFrame:
@@ -41,7 +43,16 @@ def extract_text_column_data(data: pd.DataFrame, column_name: str) -> pd.Series:
     )
 
 
-def langviz():
+def run_app(data: pd.Series) -> None:
+    """Runs the application and passes the data into it"""
+
+    app = Dash(__name__, external_stylesheets=[dbc.themes.MORPH])
+    app.layout = layout.layout(data)
+    callbacks.get_callbacks(app)
+    app.run(debug=True)
+
+
+def cli():
     """CLI handler"""
     parser = argparse.ArgumentParser(
         description="CLI command for running the Langviz software"
@@ -62,7 +73,6 @@ def langviz():
     path = args.input_path
     column_name = args.column_name
 
-    print("hello")
     df = data_loader(path)
     text_data = extract_text_column_data(df, column_name)
 

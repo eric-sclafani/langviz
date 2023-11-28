@@ -1,5 +1,5 @@
 """
-This module contains functions for converting raw text into useful objects for the layout components
+This module contains text processing 
 """
 
 from dataclasses import dataclass
