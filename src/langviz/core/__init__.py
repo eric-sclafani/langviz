@@ -3,10 +3,13 @@ This file contains the function that gets called from the command line
 """
 
 import argparse
+from typing import List
 
 import dash_bootstrap_components as dbc
 import pandas as pd
 from dash import Dash
+
+from langviz.processing import process_documents
 
 from . import callbacks, layout
 
@@ -29,7 +32,7 @@ def data_loader(path: str) -> pd.DataFrame:
     raise RuntimeError(f"Unsupported format in path '{path}'")
 
 
-def extract_text_column_data(data: pd.DataFrame, column_name: str) -> pd.Series:
+def extract_text_column_data(data: pd.DataFrame, column_name: str) -> List[str]:
     """
     Extracts the text column from given data
 
@@ -37,17 +40,19 @@ def extract_text_column_data(data: pd.DataFrame, column_name: str) -> pd.Series:
     """
 
     if column_name in data.columns:
-        return data[column_name]
+        return data[column_name].values.tolist()
     raise RuntimeError(
         f"Column '{column_name}' not found in provided data. Existing columns: {list(data.columns)}"
     )
 
 
-def run_app(data: pd.Series) -> None:
-    """Runs the application and passes the data into it"""
+def run_app(data: List[str]) -> None:
+    """Initiates the application"""
 
     app = Dash(__name__, external_stylesheets=[dbc.themes.MORPH])
-    app.layout = layout.layout(data)
+
+    processed_documents = process_documents(data)
+    app.layout = layout.layout(processed_documents)
     callbacks.get_callbacks(app)
     app.run(debug=True)
 
