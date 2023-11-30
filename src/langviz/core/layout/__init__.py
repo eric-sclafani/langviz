@@ -16,11 +16,13 @@ def layout(data: List[Document]) -> dbc.Container:
         [
             html.H1("Langviz"),
             dbc.Tabs(
-                [
+                id="main-tabs",
+                active_tab="corpus-tab",  # for testing purposes
+                children=[
                     about.about_tab(),
                     corpus.corpus_tab(),
                     document.document_tab(),
-                ]
+                ],
             ),
         ],
         fluid=True,

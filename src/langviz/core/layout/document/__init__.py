@@ -7,4 +7,5 @@ def document_tab():
         activeTabClassName="fw-bold fst-italic",
         disabled=True,
         id="document-tab",
+        tab_id="document-tab",
     )

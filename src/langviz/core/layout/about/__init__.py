@@ -32,4 +32,5 @@ def about_tab():
         label="About",
         active_tab_class_name="fw-bold fst-italic",
         id="about-tab",
+        tab_id="about-tab",
     )
