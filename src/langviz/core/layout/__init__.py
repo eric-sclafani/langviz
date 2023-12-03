@@ -3,7 +3,6 @@
 from typing import List
 
 import dash_bootstrap_components as dbc
-import pandas as pd
 from dash import dcc, html
 
 from langviz.processing import Document
