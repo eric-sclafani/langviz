@@ -75,15 +75,11 @@ def motivation_card(card_color: str) -> dbc.Card:
 
 def layout():
     card_color = "#E8E8E8"
-    return html.Div(
+    return dbc.Stack(
         [
-            dbc.Stack(
-                [
-                    description_card(card_color),
-                    motivation_card(card_color),
-                    links_card(card_color),
-                ],
-            )
+            description_card(card_color),
+            motivation_card(card_color),
+            links_card(card_color),
         ],
         className="d-flex flex-direction-column",
     )

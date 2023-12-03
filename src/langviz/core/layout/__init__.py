@@ -19,7 +19,7 @@ def layout(data: List[Document]) -> dbc.Container:
                 active_tab="corpus-tab",  # for testing purposes
                 children=[
                     about.about_tab(),
-                    corpus.corpus_tab(),
+                    corpus.corpus_tab(data),
                     document.document_tab(),
                 ],
             ),
