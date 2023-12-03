@@ -8,4 +8,4 @@ dependencies=["pandas", "plotly", "dash", "dash-bootstrap-components", "spacy"]
 
 
 [project.scripts]
-langviz = "langviz.core:cli"
+langviz = "langviz.cli:cli"
