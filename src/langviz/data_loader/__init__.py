@@ -1,6 +1,8 @@
-from typing import List
+from typing import List, Optional
 
 import pandas as pd
+
+from langviz.processing import Document, process_documents
 
 
 def load_from_path(path: str) -> pd.DataFrame:
@@ -21,7 +23,7 @@ def load_from_path(path: str) -> pd.DataFrame:
     raise RuntimeError(f"Unsupported format in path '{path}'")
 
 
-def extract_text_column_data(data: pd.DataFrame, column_name: str) -> List[str]:
+def get_text_column_data(data: pd.DataFrame, column_name: str) -> List[str]:
     """
     Extracts the text column from given data
 
@@ -35,8 +37,21 @@ def extract_text_column_data(data: pd.DataFrame, column_name: str) -> List[str]:
     )
 
 
-def data_loader(path: str, column_name: str) -> List[str]:
+def get_doc_ids(data: pd.DataFrame, doc_id: Optional[str]) -> List[str]:
+    if doc_id is None:
+        return [f"Doc-{i}" for i in range(1, len(data) + 1)]
+    if doc_id in data:
+        return data[doc_id].astype(str).values.tolist()
+
+    raise RuntimeError(
+        f"Column '{doc_id}' not found in provided data. Existing columns: {list(data.columns)}"
+    )
+
+
+def data_loader(path: str, column_name: str, doc_id: Optional[str]) -> List[Document]:
     """Loads the user's data from path and extracts text data from provided column"""
     df = load_from_path(path)
-    text_data = extract_text_column_data(df, column_name)
-    return text_data
+    text_data = get_text_column_data(df, column_name)
+    doc_ids = get_doc_ids(df, doc_id)
+    processed_documents = process_documents(text_data, doc_ids)
+    return processed_documents

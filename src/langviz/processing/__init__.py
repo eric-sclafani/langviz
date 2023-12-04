@@ -15,11 +15,10 @@ from spacy.tokens import Doc, Span
 class Document:
     """Contains attributes to be used in visualization components"""
 
+    doc_id: str
     tokens: List[str]
-    types: Set[str]
     sentences: List[Span]
     num_tokens: int
-    num_types: int
     num_sentences: int
     doc: Doc
 
@@ -27,7 +26,7 @@ class Document:
         return self.doc.text
 
 
-def process_documents(data: List[str]) -> List[Document]:
+def process_documents(data: List[str], doc_ids: List[str]) -> List[Document]:
     """Converts each text document into Document object containing useful information"""
 
     def load_spacy_model(model: str) -> Language:
@@ -52,16 +51,19 @@ def process_documents(data: List[str]) -> List[Document]:
     docs = nlp.pipe(data)
 
     all_documents = []
-    for doc in docs:
+    for doc, doc_id in zip(docs, doc_ids):
         tokens = get_token_strings(doc)
-        types = set(tokens)
         sentences = get_sentences(doc)
         num_tokens = len(tokens)
-        num_types = len(types)
         num_sentences = len(sentences)
 
         document = Document(
-            tokens, types, sentences, num_tokens, num_types, num_sentences, doc
+            doc_id,
+            tokens,
+            sentences,
+            num_tokens,
+            num_sentences,
+            doc,
         )
 
         all_documents.append(document)

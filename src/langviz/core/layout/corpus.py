@@ -42,16 +42,21 @@ class Corpus:
 def corpus_stats_table(corpus: Corpus) -> DataTable:
     data = pd.DataFrame(
         {
-            "Total # of documents": [corpus.document_count],
-            "Total # sentences": [corpus.total_sentence_count],
-            "Total # of tokens": [corpus.total_token_count],
+            "Total # of documents": corpus.document_count,
+            "Total # sentences": corpus.total_sentence_count,
+            "Total # of tokens": corpus.total_token_count,
         },
+        index=[0],
     )
     columns = [{"name": col_name, "id": col_name} for col_name in data.columns]
     return DataTable(
         id="corpus-stats-table",
         columns=columns,
         data=data.to_dict("records"),
+        style_cell={"textAlign": "left"},
+        style_table={
+            "width": "300px",
+        },
     )
 
 
