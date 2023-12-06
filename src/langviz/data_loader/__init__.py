@@ -39,7 +39,7 @@ def get_text_column_data(data: pd.DataFrame, column_name: str) -> List[str]:
 
 def get_doc_ids(data: pd.DataFrame, doc_id: Optional[str]) -> List[str]:
     if doc_id is None:
-        return [f"Doc-{i}" for i in range(1, len(data) + 1)]
+        return [f"Doc-{i+1}" for i in range(len(data))]
     if doc_id in data:
         return data[doc_id].astype(str).values.tolist()
 

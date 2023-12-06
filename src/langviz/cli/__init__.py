@@ -14,8 +14,6 @@ def run_app(path: str, column_name: str, doc_id: Optional[str]) -> None:
     """Initiates the application"""
     app = Dash(__name__, external_stylesheets=[dbc.themes.MORPH])
     data = data_loader(path, column_name, doc_id)
-
-    print(data[0].doc_id)
     app.layout = layout.layout(data)
     callbacks.get_callbacks(app)
     app.run(debug=True)

@@ -17,9 +17,8 @@ class Document:
 
     doc_id: str
     tokens: List[str]
+    types: Set[str]
     sentences: List[Span]
-    num_tokens: int
-    num_sentences: int
     doc: Doc
 
     def __repr__(self):
@@ -42,6 +41,9 @@ def process_documents(data: List[str], doc_ids: List[str]) -> List[Document]:
         """Returns a list of all token strings"""
         return [token.text for token in spacy_doc]
 
+    def get_type_strings(spacy_doc: Doc) -> Set[str]:
+        return set(token.text.lower() for token in spacy_doc)
+
     def get_sentences(spacy_doc: Doc) -> List[Span]:
         """Returns a list of all sentence objects"""
         return list(spacy_doc.sents)
@@ -53,19 +55,16 @@ def process_documents(data: List[str], doc_ids: List[str]) -> List[Document]:
     all_documents = []
     for doc, doc_id in zip(docs, doc_ids):
         tokens = get_token_strings(doc)
+        types = get_type_strings(doc)
         sentences = get_sentences(doc)
-        num_tokens = len(tokens)
-        num_sentences = len(sentences)
 
         document = Document(
             doc_id,
             tokens,
+            types,
             sentences,
-            num_tokens,
-            num_sentences,
             doc,
         )
-
         all_documents.append(document)
 
     return all_documents

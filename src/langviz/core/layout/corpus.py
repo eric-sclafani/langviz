@@ -4,6 +4,7 @@ from typing import List, Set
 
 import dash_bootstrap_components as dbc
 import pandas as pd
+from dash import html
 from dash.dash_table import DataTable
 
 from langviz.processing import Document
@@ -11,48 +12,77 @@ from langviz.processing import Document
 
 @dataclass
 class Corpus:
-    _documents: List[Document]
+    documents: List[Document]
 
     @property
-    def documents(self) -> List[str]:
-        """Returns a list of all document strings"""
-        return [document.doc.text for document in self._documents]
+    def sentences(self) -> List[str]:
+        all_sentences = []
+        for document in self.documents:
+            all_sentences.extend([sentence.text for sentence in document.sentences])
+        return all_sentences
 
     @property
     def tokens(self) -> List[str]:
         """Returns a list of all token strings in corpus"""
         all_tokens = []
-        for document in self._documents:
+        for document in self.documents:
             all_tokens.extend(document.tokens)
         return all_tokens
 
     @property
-    def document_count(self):
-        return len(self._documents)
+    def types(self) -> Set[str]:
+        all_types = {
+            token_type for document in self.documents for token_type in document.types
+        }
+        return all_types
 
     @property
-    def total_sentence_count(self):
-        return sum(document.num_sentences for document in self._documents)
-
-    @property
-    def total_token_count(self):
-        return sum(document.num_tokens for document in self._documents)
+    def document_ids(self) -> List[str]:
+        return [document.doc_id for document in self.documents]
 
 
-def corpus_stats_table(corpus: Corpus) -> DataTable:
+def corpus_stats_per_doc_table(corpus: Corpus) -> DataTable:
+    """Returns a table showing the per-document corpus stats"""
     data = pd.DataFrame(
         {
-            "Total # of documents": corpus.document_count,
-            "Total # sentences": corpus.total_sentence_count,
-            "Total # of tokens": corpus.total_token_count,
+            "Document ID": corpus.document_ids,
+            "Sentences": [len(document.sentences) for document in corpus.documents],
+            "Tokens": [len(document.tokens) for document in corpus.documents],
+            "Types": [len(document.types) for document in corpus.documents],
+        },
+    )
+    columns = [{"name": col_name, "id": col_name} for col_name in data.columns]
+    return DataTable(
+        id="corpus-stats-per-doc-table",
+        data=data.to_dict("records"),
+        columns=columns,
+        page_action="none",
+        fixed_rows={"headers": True},
+        style_cell={"textAlign": "left"},
+        style_table={
+            "width": "auto",
+            "height": "300px",
+            "overflowY": "auto",
+        },
+    )
+
+
+def corpus_stats_total_table(corpus: Corpus) -> DataTable:
+    """Returns a table showing the corpus stats totals"""
+    data = pd.DataFrame(
+        {
+            "Total documents": len(corpus.documents),
+            "Total sentences": len(corpus.sentences),
+            "Total tokens": len(corpus.tokens),
+            "Total types": len(corpus.types),
         },
         index=[0],
     )
     columns = [{"name": col_name, "id": col_name} for col_name in data.columns]
     return DataTable(
-        id="corpus-stats-table",
-        columns=columns,
+        id="corpus-stats-total-table",
         data=data.to_dict("records"),
+        columns=columns,
         style_cell={"textAlign": "left"},
         style_table={
             "width": "300px",
@@ -60,11 +90,20 @@ def corpus_stats_table(corpus: Corpus) -> DataTable:
     )
 
 
-def layout(data: List[Document]):
-    corpus = Corpus(data)
+def stats_tables(corpus: Corpus) -> dbc.Stack:
     return dbc.Stack(
         [
-            corpus_stats_table(corpus),
+            corpus_stats_per_doc_table(corpus),
+            corpus_stats_total_table(corpus),
+        ],
+    )
+
+
+def layout(data: List[Document]):
+    corpus = Corpus(data)
+    return html.Div(
+        [
+            stats_tables(corpus),
         ]
     )
 
