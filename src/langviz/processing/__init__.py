@@ -48,6 +48,7 @@ def process_documents(data: List[str], doc_ids: List[str]) -> List[Document]:
         """Returns a list of all sentence objects"""
         return list(spacy_doc.sents)
 
+    # TODO: experiment with medium and large model time
     nlp = load_spacy_model("en_core_web_lg")
     nlp.max_length = 10000000
     docs = nlp.pipe(data)

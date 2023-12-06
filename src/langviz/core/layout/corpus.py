@@ -3,8 +3,11 @@ from dataclasses import dataclass
 from typing import List, Set
 
 import dash_bootstrap_components as dbc
+import numpy as np
 import pandas as pd
-from dash import html
+import plotly.graph_objects as go
+import umap
+from dash import dcc, html
 from dash.dash_table import DataTable
 
 from langviz.processing import Document
@@ -41,6 +44,9 @@ class Corpus:
         return [document.doc_id for document in self.documents]
 
 
+### COMPONENT FUNCTIONS ###
+
+
 def corpus_stats_per_doc_table(corpus: Corpus) -> DataTable:
     """Returns a table showing the per-document corpus stats"""
     data = pd.DataFrame(
@@ -60,7 +66,7 @@ def corpus_stats_per_doc_table(corpus: Corpus) -> DataTable:
         fixed_rows={"headers": True},
         style_cell={"textAlign": "left"},
         style_table={
-            "width": "auto",
+            "width": "650px",
             "height": "300px",
             "overflowY": "auto",
         },
@@ -85,9 +91,51 @@ def corpus_stats_total_table(corpus: Corpus) -> DataTable:
         columns=columns,
         style_cell={"textAlign": "left"},
         style_table={
-            "width": "300px",
+            "width": "500px",
         },
     )
+
+
+def document_scatter_plot(corpus: Corpus) -> dcc.Graph:
+    """"""
+
+    def get_document_vectors() -> np.ndarray:
+        """Returns a 2D array of all document word2vec vectors"""
+        return np.vstack(
+            [np.array(document.doc.vector) for document in corpus.documents]
+        )
+
+    def get_doc_ids() -> List[str]:
+        return [document.doc_id for document in corpus.documents]
+
+    def reduce_to_2d(matrix: np.ndarray) -> np.ndarray:
+        reducer = umap.UMAP()
+        return reducer.fit_transform(matrix)
+
+    doc_matrix = get_document_vectors()
+    doc_ids = get_doc_ids()
+    reduced_matrix = reduce_to_2d(doc_matrix)
+
+    fig = go.Figure(
+        go.Scatter(
+            mode="markers",
+            x=reduced_matrix[:, 0],
+            y=reduced_matrix[:, 1],
+            text=doc_ids,
+        )
+    )
+    fig.update_layout(
+        title="Document Vectors in 2D Space",
+        title_x=0.5,
+        title_y=0.85,
+        xaxis=go.layout.XAxis(showticklabels=False),
+        yaxis=go.layout.YAxis(showticklabels=False),
+    )
+
+    return dcc.Graph(figure=fig, className="doc-scatter-plot")
+
+
+### LAYOUT FUNCTIONS ###
 
 
 def stats_tables(corpus: Corpus) -> dbc.Stack:
@@ -99,11 +147,17 @@ def stats_tables(corpus: Corpus) -> dbc.Stack:
     )
 
 
+# in layout, use rows and cols eventually
 def layout(data: List[Document]):
     corpus = Corpus(data)
     return html.Div(
         [
-            stats_tables(corpus),
+            dbc.Row(
+                [
+                    dbc.Col(stats_tables(corpus)),
+                    dbc.Col(document_scatter_plot(corpus)),
+                ]
+            )
         ]
     )
 
