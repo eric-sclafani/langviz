@@ -3,9 +3,8 @@ import os
 from dataclasses import dataclass
 from typing import List, Set
 import dash_bootstrap_components as dbc
-import numpy as np
 import pandas as pd
-import plotly.graph_objects as go
+import plotly.express as px
 import umap
 from bertopic import BERTopic
 from bertopic.representation import KeyBERTInspired
@@ -102,46 +101,15 @@ def corpus_stats_total_table(corpus: Corpus) -> DataTable:
     )
 
 
-def document_scatter_plot(corpus: Corpus) -> dcc.Graph:
-    """"""
+# eventually: add a note saying umap is stochastic, so topics will
+# change for each code run (not drastically though)
+def corpus_topics(corpus: Corpus) -> dcc.Graph:
+    """
+    **Heavy WIP**
 
-    def get_document_vectors() -> np.ndarray:
-        """Returns a 2D array of all document word2vec vectors"""
-        return np.vstack(
-            [np.array(document.doc.vector) for document in corpus.documents]
-        )
-
-    def get_doc_ids() -> List[str]:
-        return [document.doc_id for document in corpus.documents]
-
-    def reduce_to_2d(matrix: np.ndarray) -> np.ndarray:
-        reducer = umap.UMAP()
-        return reducer.fit_transform(matrix)  # type: ignore
-
-    doc_matrix = get_document_vectors()
-    doc_ids = get_doc_ids()
-    reduced_matrix = reduce_to_2d(doc_matrix)
-
-    fig = go.Figure(
-        go.Scatter(
-            mode="markers",
-            x=reduced_matrix[:, 0],
-            y=reduced_matrix[:, 1],
-            text=doc_ids,
-        )
-    )
-    fig.update_layout(
-        title="Document Vectors in 2D Space",
-        title_x=0.5,
-        title_y=0.85,
-        xaxis=go.layout.XAxis(showticklabels=False),
-        yaxis=go.layout.YAxis(showticklabels=False),
-    )
-
-    return dcc.Graph(figure=fig, className="doc-scatter-plot")
-
-
-def corpus_topics(corpus: Corpus):
+    Performs topic modeling over corpus and returns a
+    scatterplot where documents are clustered by their topic
+    """
     all_text_documents = [document.doc.text for document in corpus.documents]
 
     representation_model = KeyBERTInspired()
@@ -151,20 +119,44 @@ def corpus_topics(corpus: Corpus):
     embeddings = sentence_model.encode(all_text_documents, show_progress_bar=False)
 
     topic_model = BERTopic(
-        ctfidf_model=ctfidf_model, representation_model=representation_model
+        ctfidf_model=ctfidf_model,
+        representation_model=representation_model,
+        embedding_model=sentence_model,
+        calculate_probabilities=False,
     )
-    topics, topic_probs = topic_model.fit_transform(all_text_documents)
+
+    topic_model.fit(documents=all_text_documents, embeddings=embeddings)  # type:ignore
+    reduced_embeddings = umap.UMAP(
+        n_neighbors=10, min_dist=0.0, metric="cosine"
+    ).fit_transform(embeddings)
 
     fig = topic_model.visualize_documents(
         docs=all_text_documents,
-        embeddings=embeddings,  # type: ignore
-        width=700,
+        reduced_embeddings=reduced_embeddings,  # type: ignore
+        # width=700,
         height=400,
     )
-
-    fig.update_traces(hovertext=[document.doc_id for document in corpus.documents])
+    # fig.update_traces(hovertext=[document.doc_id for document in corpus.documents]) # makes each label a document id instead of text. Unsure about this
 
     return dcc.Graph(figure=fig)
+
+
+def named_entities_histogram(corpus: Corpus) -> dcc.Graph:
+    entities = [
+        {"text": ent.text, "label": ent.label_}
+        for document in corpus.documents
+        for ent in document.doc.ents
+        if ent not in ["CARDINAL", "ORDINAL", "PERCENT", "TIME"]
+    ]
+    entities_df = pd.DataFrame(entities)
+
+    fig = px.histogram(entities_df, x="label", color="label")
+    # fig.update_traces({"marker_line_width": 0})
+    fig.update_layout(xaxis={"categoryorder": "total descending"})
+    return dcc.Graph(figure=fig, id="ner-histogram")
+
+
+# def named_entity_list()
 
 
 ### LAYOUT FUNCTIONS ###
@@ -189,9 +181,12 @@ def layout(data: List[Document]):
                     dbc.Col(stats_tables(corpus)),
                     dbc.Col(corpus_topics(corpus)),
                 ],
-                class_name="d-flex flex-nowrap",
             ),
-            dbc.Row([]),
+            dbc.Row(
+                [
+                    dbc.Col(named_entities_histogram(corpus)),
+                ]
+            ),
         ],
     )
 
