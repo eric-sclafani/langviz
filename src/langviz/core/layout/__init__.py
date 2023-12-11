@@ -6,7 +6,6 @@ import dash_bootstrap_components as dbc
 from dash import dcc, html
 
 from langviz.processing import Document
-
 from . import about, corpus, document
 
 

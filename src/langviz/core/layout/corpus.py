@@ -1,16 +1,22 @@
 """This module contains the code for the 'Corpus' tab"""
+import os
 from dataclasses import dataclass
 from typing import List, Set
-
 import dash_bootstrap_components as dbc
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 import umap
+from bertopic import BERTopic
+from bertopic.representation import KeyBERTInspired
+from bertopic.vectorizers import ClassTfidfTransformer
 from dash import dcc, html
 from dash.dash_table import DataTable
+from sentence_transformers import SentenceTransformer
 
 from langviz.processing import Document
+
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 
 @dataclass
@@ -18,7 +24,7 @@ class Corpus:
     documents: List[Document]
 
     @property
-    def sentences(self) -> List[str]:
+    def sentences(self) -> list[str]:
         all_sentences = []
         for document in self.documents:
             all_sentences.extend([sentence.text for sentence in document.sentences])
@@ -110,7 +116,7 @@ def document_scatter_plot(corpus: Corpus) -> dcc.Graph:
 
     def reduce_to_2d(matrix: np.ndarray) -> np.ndarray:
         reducer = umap.UMAP()
-        return reducer.fit_transform(matrix)
+        return reducer.fit_transform(matrix)  # type: ignore
 
     doc_matrix = get_document_vectors()
     doc_ids = get_doc_ids()
@@ -135,6 +141,32 @@ def document_scatter_plot(corpus: Corpus) -> dcc.Graph:
     return dcc.Graph(figure=fig, className="doc-scatter-plot")
 
 
+def corpus_topics(corpus: Corpus):
+    all_text_documents = [document.doc.text for document in corpus.documents]
+
+    representation_model = KeyBERTInspired()
+    ctfidf_model = ClassTfidfTransformer(reduce_frequent_words=True)
+
+    sentence_model = SentenceTransformer("all-MiniLM-L6-v2")
+    embeddings = sentence_model.encode(all_text_documents, show_progress_bar=False)
+
+    topic_model = BERTopic(
+        ctfidf_model=ctfidf_model, representation_model=representation_model
+    )
+    topics, topic_probs = topic_model.fit_transform(all_text_documents)
+
+    fig = topic_model.visualize_documents(
+        docs=all_text_documents,
+        embeddings=embeddings,  # type: ignore
+        width=700,
+        height=400,
+    )
+
+    fig.update_traces(hovertext=[document.doc_id for document in corpus.documents])
+
+    return dcc.Graph(figure=fig)
+
+
 ### LAYOUT FUNCTIONS ###
 
 
@@ -144,10 +176,10 @@ def stats_tables(corpus: Corpus) -> dbc.Stack:
             corpus_stats_per_doc_table(corpus),
             corpus_stats_total_table(corpus),
         ],
+        class_name="top-row-stack",
     )
 
 
-# in layout, use rows and cols eventually
 def layout(data: List[Document]):
     corpus = Corpus(data)
     return html.Div(
@@ -155,10 +187,12 @@ def layout(data: List[Document]):
             dbc.Row(
                 [
                     dbc.Col(stats_tables(corpus)),
-                    dbc.Col(document_scatter_plot(corpus)),
-                ]
-            )
-        ]
+                    dbc.Col(corpus_topics(corpus)),
+                ],
+                class_name="d-flex flex-nowrap",
+            ),
+            dbc.Row([]),
+        ],
     )
 
 

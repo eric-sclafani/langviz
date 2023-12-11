@@ -53,3 +53,4 @@ These are the planned features for the first usable version of this software, or
 - Use co-occurrence matrices to create a graph-based interactive visualization
 - User can search for specific terms across all docs?
 - User can point it to a directory and can select which dataset to use
+- Right now, an exception is raised when a UnicodeDecodeError happens which tells the user to preprocess their data before loading. I want to eventually improve this system to make it more user friendly

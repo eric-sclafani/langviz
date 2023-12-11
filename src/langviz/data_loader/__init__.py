@@ -11,14 +11,17 @@ def load_from_path(path: str) -> pd.DataFrame:
 
     Raises RuntimeError if unsupported format is given
     """
-    if path.endswith(".csv"):
-        return pd.read_csv(path, engine="c")
 
-    if path.endswith(".json") or path.endswith(".jsonl"):
-        return pd.read_json(path, lines=True)
-
-    if path.endswith(".xlsx"):
-        return pd.read_excel(path)
+    try:
+        if path.endswith(".csv"):
+            return pd.read_csv(path)
+        if path.endswith(".json") or path.endswith(".jsonl"):
+            return pd.read_json(path, lines=True)
+        if path.endswith(".xlsx"):
+            return pd.read_excel(path)
+    except UnicodeDecodeError:
+        print("Unable to decode file. Please check and preprocess your data")
+        exit()
 
     raise RuntimeError(f"Unsupported format in path '{path}'")
 
