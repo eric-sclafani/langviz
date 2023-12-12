@@ -5,6 +5,7 @@ from typing import List, Set
 import dash_bootstrap_components as dbc
 import pandas as pd
 import plotly.express as px
+import plotly.graph_objects as go
 import umap
 from bertopic import BERTopic
 from bertopic.representation import KeyBERTInspired
@@ -47,6 +48,23 @@ class Corpus:
     @property
     def document_ids(self) -> List[str]:
         return [document.doc_id for document in self.documents]
+
+    @property
+    def named_entity_texts(self) -> List[str]:
+        return [ent.text for document in self.documents for ent in document.doc.ents]
+
+    @property
+    def named_entity_labels(self) -> List[str]:
+        return [ent.label_ for document in self.documents for ent in document.doc.ents]
+
+    @property
+    def named_entities_df(self) -> pd.DataFrame:
+        entities = [
+            {"text": ent.text, "label": ent.label_}
+            for document in self.documents
+            for ent in document.doc.ents
+        ]
+        return pd.DataFrame(entities)
 
 
 ### COMPONENT FUNCTIONS ###
@@ -141,22 +159,31 @@ def corpus_topics(corpus: Corpus) -> dcc.Graph:
     return dcc.Graph(figure=fig)
 
 
-def named_entities_histogram(corpus: Corpus) -> dcc.Graph:
-    entities = [
-        {"text": ent.text, "label": ent.label_}
-        for document in corpus.documents
-        for ent in document.doc.ents
-        if ent not in ["CARDINAL", "ORDINAL", "PERCENT", "TIME"]
-    ]
-    entities_df = pd.DataFrame(entities)
-
-    fig = px.histogram(entities_df, x="label", color="label")
-    # fig.update_traces({"marker_line_width": 0})
+def named_entity_histogram(corpus: Corpus) -> dcc.Graph:
+    fig = px.histogram(
+        corpus.named_entities_df,
+        x="label",
+        color="label",
+    )
     fig.update_layout(xaxis={"categoryorder": "total descending"})
     return dcc.Graph(figure=fig, id="ner-histogram")
 
 
-# def named_entity_list()
+def named_entity_json(corpus: Corpus):
+    """
+    Retrieves the jsonified named entity dataframe and stores it in
+    a hidden HTML div to be used by the named entity list callback.
+    """
+    json_data = corpus.named_entities_df.to_json(orient="records")
+    return html.Div(children=json_data, id="named-entity-json", hidden=True)
+
+
+def named_entity_list():
+    """
+    Returns the named entity list div for the named entity list callback
+    to insert either a placeholder component or the list of named entity texts
+    """
+    return html.Div(id="named-entity-list", hidden=True)
 
 
 ### LAYOUT FUNCTIONS ###
@@ -168,7 +195,7 @@ def stats_tables(corpus: Corpus) -> dbc.Stack:
             corpus_stats_per_doc_table(corpus),
             corpus_stats_total_table(corpus),
         ],
-        class_name="top-row-stack",
+        class_name="stats-tables",
     )
 
 
@@ -184,7 +211,9 @@ def layout(data: List[Document]):
             ),
             dbc.Row(
                 [
-                    dbc.Col(named_entities_histogram(corpus)),
+                    dbc.Col(named_entity_histogram(corpus)),
+                    named_entity_json(corpus),
+                    dbc.Col(named_entity_list()),
                 ]
             ),
         ],
