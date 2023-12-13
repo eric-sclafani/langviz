@@ -5,7 +5,6 @@ from typing import List, Set
 import dash_bootstrap_components as dbc
 import pandas as pd
 import plotly.express as px
-import plotly.graph_objects as go
 import umap
 from bertopic import BERTopic
 from bertopic.representation import KeyBERTInspired
@@ -164,26 +163,38 @@ def named_entity_histogram(corpus: Corpus) -> dcc.Graph:
         corpus.named_entities_df,
         x="label",
         color="label",
+        title="Named Entity Frequencies",
     )
-    fig.update_layout(xaxis={"categoryorder": "total descending"})
+    fig.update_layout(
+        xaxis={"categoryorder": "total descending"},
+        xaxis_title="Named Entity Labels",
+        yaxis_title="Frequency",
+        showlegend=False,
+        title_x=0.5,
+    )
     return dcc.Graph(figure=fig, id="ner-histogram")
 
 
-def named_entity_json(corpus: Corpus):
+# replace Div with dcc.Store??
+def named_entity_json_storage(corpus: Corpus):
     """
     Retrieves the jsonified named entity dataframe and stores it in
-    a hidden HTML div to be used by the named entity list callback.
+    a dcc.Store component to be used by the named entity list callback.
     """
     json_data = corpus.named_entities_df.to_json(orient="records")
-    return html.Div(children=json_data, id="named-entity-json", hidden=True)
+    return dcc.Store(
+        data=json_data,
+        id="named-entity-json-storage",
+        storage_type="session",
+    )
 
 
 def named_entity_list():
     """
-    Returns the named entity list div for the named entity list callback
-    to insert either a placeholder component or the list of named entity texts
+    Returns the named entity table div for the named entity table callback
+    to insert either a placeholder component or the table of named entity texts
     """
-    return html.Div(id="named-entity-list", hidden=True)
+    return html.Div(id="named-entity-list")
 
 
 ### LAYOUT FUNCTIONS ###
@@ -212,7 +223,7 @@ def layout(data: List[Document]):
             dbc.Row(
                 [
                     dbc.Col(named_entity_histogram(corpus)),
-                    named_entity_json(corpus),
+                    named_entity_json_storage(corpus),
                     dbc.Col(named_entity_list()),
                 ]
             ),
