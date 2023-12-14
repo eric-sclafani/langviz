@@ -23,34 +23,38 @@ This EDA process, however, can be tedious and time-consuming. That is where this
 It would be nice to have a one-stop shop for attaining useful statistics such as # of documents, tokens, types, sentences, etc.,
 and visualizing more advanced features like named entities and dependency parses.
 
-## Planned starting features
+## Features
 
-These are the planned features for the first usable version of this software, organized by level:
+After providing a dataset path, the user can observe useful statistics and visualizations both
+on the corpus and document levels.
 
-**CORPUS**
+**Checked features (`[x]`) are already implemented**, empty ones are not
 
-- \# of documents, sentences, tokens, types, lemmas, etc...
-- Token-type ratio
-- Mean, median, range # of tokens per doc
-- Tfidf word cloud over whole corpus
-- Topic modeling
-- Part of speech information
+### General
 
-**DOCUMENT**
+- [ ] More configuration options:
+  - [ ] spacy model, can specify a certain model including custom ones
+  - [ ] only use first X documents
+- [ ] Multiple languages
+- [ ] User can provide labels and additional visualizations will be made
+- [ ] Implement more knowledge graphs because knowledge graphs are cool
+- [ ]
 
-- Named Entity Recognition
-- Morphological parsing
-- Sentiment analysis
-- Part of speech information
-- Sentence analysis (dependency parse knowledge graphs, sentence-specific information)
+### Corpus
 
-## Possible future implementations
+- [x] Topic modeling with BERTopic
+- [x] Corpus level statistics
+  - [x] document/sentence/token/type counts per document
+  - [x] total document/sentence/token/type count over corpus
+  - [ ] mean/median/range num of tokens/sentences per document
+- [x] Named entity histogram + list of all texts extracted per label
 
-- Possibly support multiple languages
-- Corpus word search
-- Bias detection
-- More complex statistics
-- Use co-occurrence matrices to create a graph-based interactive visualization
-- User can search for specific terms across all docs?
-- User can point it to a directory and can select which dataset to use
-- Right now, an exception is raised when a UnicodeDecodeError happens which tells the user to preprocess their data before loading. I want to eventually improve this system to make it more user friendly
+### Document
+
+- [ ] Named entities
+- [ ] Morphological information
+- [ ] Sentiment
+- [ ] Sentences: users can observe information about each individual sentence
+  - [ ] Dependency parse knowledge graph
+  - [ ] ...
+- [ ] User can filter for documents that meet a condition or group of conditions
