@@ -34,11 +34,16 @@ def get_text_column_data(data: pd.DataFrame, column_name: str) -> List[str]:
     """
     Extracts the text column from given data
 
-    Raises RuntimeError if column doesn't exist
+    Raises RuntimeError if provided column holds no documents or column does not exist
     """
-
     if column_name in data.columns:
-        return data[column_name].values.tolist()
+        text_data = data[column_name].values.tolist()
+        if not text_data:
+            raise RuntimeError(
+                f"Provided dataset has no documents in column '{column_name}'"
+            )
+        return text_data
+
     raise RuntimeError(
         f"Column '{column_name}' not found in provided data. Existing columns: {list(data.columns)}"
     )
