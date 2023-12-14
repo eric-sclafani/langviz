@@ -129,6 +129,8 @@ def corpus_topics(corpus: Corpus) -> dcc.Graph:
     """
     all_text_documents = [document.doc.text for document in corpus.documents]
 
+    min_topic_size = min(10, len(all_text_documents))
+
     representation_model = KeyBERTInspired()
     ctfidf_model = ClassTfidfTransformer(reduce_frequent_words=True)
 
@@ -140,6 +142,7 @@ def corpus_topics(corpus: Corpus) -> dcc.Graph:
         representation_model=representation_model,
         embedding_model=sentence_model,
         calculate_probabilities=False,
+        min_topic_size=min_topic_size
     )
 
     topic_model.fit(documents=all_text_documents, embeddings=embeddings)  # type:ignore
