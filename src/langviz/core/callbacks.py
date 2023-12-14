@@ -12,7 +12,7 @@ def get_callbacks(app: Dash):
         Input("named-entity-json-storage", "data"),
         Input("ner-histogram", "clickData"),
     )
-    def update_named_entity_list(json_string, click_data: Dict):
+    def update_named_entity_list(json_string: str, click_data: Dict):
         if json_string is None or click_data is None:
             return dcc.Textarea(
                 value="Click on a labeled bar in the\nhistogram to display a full list of that entity's texts",

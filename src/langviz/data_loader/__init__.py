@@ -1,3 +1,4 @@
+import sys
 from typing import List, Optional
 
 import pandas as pd
@@ -5,11 +6,14 @@ import pandas as pd
 from langviz.processing import Document, process_documents
 
 
+# TODO: improve decoding error handling, maybe cycle through different decoding options before raising error?
 def load_from_path(path: str) -> pd.DataFrame:
     """
     Loads the user's tabular data into a Pandas dataframe.
 
     Raises RuntimeError if unsupported format is given
+
+    Raises UnicodeDecodeError if any decoding errors occur
     """
 
     try:
@@ -21,7 +25,7 @@ def load_from_path(path: str) -> pd.DataFrame:
             return pd.read_excel(path)
     except UnicodeDecodeError:
         print("Unable to decode file. Please check and preprocess your data")
-        exit()
+        sys.exit()
 
     raise RuntimeError(f"Unsupported format in path '{path}'")
 
@@ -41,6 +45,12 @@ def get_text_column_data(data: pd.DataFrame, column_name: str) -> List[str]:
 
 
 def get_doc_ids(data: pd.DataFrame, doc_id: Optional[str]) -> List[str]:
+    """
+    Returns a list of unique document IDs. If user provides a column name for this,
+    attempts to use that column's values. Else, generates new IDs for each document
+
+    Raises RuntimeError if provided column is not found
+    """
     if doc_id is None:
         return [f"Doc-{i+1}" for i in range(len(data))]
     if doc_id in data:

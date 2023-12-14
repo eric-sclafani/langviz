@@ -2,6 +2,7 @@
 import os
 from dataclasses import dataclass
 from typing import List, Set
+
 import dash_bootstrap_components as dbc
 import pandas as pd
 import plotly.express as px
@@ -120,6 +121,7 @@ def corpus_stats_total_table(corpus: Corpus) -> DataTable:
 
 # eventually: add a note saying umap is stochastic, so topics will
 # change for each code run (not drastically though)
+# also: maybe dont use sentencetransformers, use spacy vectors for this
 def corpus_topics(corpus: Corpus) -> dcc.Graph:
     """
     **Heavy WIP**
