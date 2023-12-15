@@ -23,6 +23,10 @@ This EDA process, however, can be tedious and time-consuming. That is where this
 It would be nice to have a one-stop shop for attaining useful statistics such as # of documents, tokens, types, sentences, etc.,
 and visualizing more advanced features like named entities and dependency parses.
 
+## Examples
+
+For a demonstration of the software, check out the [examples](examples/) directory!
+
 ## Features
 
 After providing a dataset path, the user can observe useful statistics and visualizations both
