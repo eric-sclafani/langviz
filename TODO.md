@@ -8,6 +8,8 @@ This document contains items on the immediate horizon. Check the README for a li
 
 - Procure a good example dataset or three and showcase Langviz in the repository in an `examples/` dir
 
+- Figure out why printing to console in the CLI function prints things out two times
+
 ## Optimization
 
 - Caching: for each given path, Langviz will cache all calculations, so when the use provides a path langiz has seen already, it will

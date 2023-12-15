@@ -38,7 +38,6 @@ on the corpus and document levels.
 - [ ] Multiple languages
 - [ ] User can provide labels and additional visualizations will be made
 - [ ] Implement more knowledge graphs because knowledge graphs are cool
-- [ ]
 
 ### Corpus
 
