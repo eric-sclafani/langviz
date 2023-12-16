@@ -66,10 +66,10 @@ def get_doc_ids(data: pd.DataFrame, doc_id: Optional[str]) -> List[str]:
     )
 
 
-def data_loader(path: str, column_name: str, doc_id: Optional[str]) -> List[Document]:
+def data_loader(path: str, column_name: str, doc_id: Optional[str], n_process: int) -> List[Document]:
     """Loads the user's data from path and extracts text data from provided column"""
     df = load_from_path(path)
     text_data = get_text_column_data(df, column_name)
     doc_ids = get_doc_ids(df, doc_id)
-    processed_documents = process_documents(text_data, doc_ids)
+    processed_documents = process_documents(text_data, doc_ids, n_process)
     return processed_documents

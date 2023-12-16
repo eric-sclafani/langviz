@@ -25,7 +25,7 @@ class Document:
         return self.doc.text
 
 
-def process_documents(data: List[str], doc_ids: List[str]) -> List[Document]:
+def process_documents(data: List[str], doc_ids: List[str], n_process: int) -> List[Document]:
     """Converts each text document into Document object containing useful information"""
 
     def load_spacy_model(model: str) -> Language:
@@ -51,7 +51,7 @@ def process_documents(data: List[str], doc_ids: List[str]) -> List[Document]:
     # TODO: experiment with medium and large model time
     nlp = load_spacy_model("en_core_web_lg")
     nlp.max_length = 10000000
-    docs = nlp.pipe(data)
+    docs = nlp.pipe(data, n_process=n_process)
 
     all_documents = []
     for doc, doc_id in zip(docs, doc_ids):
