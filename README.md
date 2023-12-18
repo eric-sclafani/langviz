@@ -49,7 +49,7 @@ on the corpus and document levels.
 - [x] Corpus level statistics
   - [x] document/sentence/token/type counts per document
   - [x] total document/sentence/token/type count over corpus
-  - [ ] mean/median/range num of tokens/sentences per document
+  - [x] mean/median/range num of tokens/sentences per document
 - [x] Named entity histogram + list of all texts extracted per label
 
 ### Document
