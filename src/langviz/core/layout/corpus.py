@@ -75,7 +75,7 @@ def document_stats_overview_table(corpus: Corpus) -> DataTable:
         id="document-stats-overview-table",
         data=data.to_dict("records"),
         columns=columns,
-        page_action="none",
+        page_size=100,
         fixed_rows={"headers": True},
         style_cell={"textAlign": "left"},
         style_table={
