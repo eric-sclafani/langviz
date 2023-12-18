@@ -50,14 +50,6 @@ class Corpus:
         return [document.doc_id for document in self.documents]
 
     @property
-    def named_entity_texts(self) -> List[str]:
-        return [ent.text for document in self.documents for ent in document.doc.ents]
-
-    @property
-    def named_entity_labels(self) -> List[str]:
-        return [ent.label_ for document in self.documents for ent in document.doc.ents]
-
-    @property
     def named_entities_df(self) -> pd.DataFrame:
         entities = [
             {"text": ent.text, "label": ent.label_}
