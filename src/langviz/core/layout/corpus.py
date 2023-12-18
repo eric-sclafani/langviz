@@ -111,6 +111,38 @@ def corpus_stats_total_table(corpus: Corpus) -> DataTable:
     )
 
 
+def corpus_stats_avg_table(corpus: Corpus) -> DataTable:
+    """"""
+
+    def get_average(items: List[int]) -> float:
+        """Returns the average of a container of integers"""
+        return sum(items) / len(items)
+
+    sentence_counts = [len(document.sentences) for document in corpus.documents]
+    token_counts = [len(document.tokens) for document in corpus.documents]
+    type_counts = [len(document.types) for document in corpus.documents]
+
+    data = pd.DataFrame(
+        {
+            "Average sentences per document": get_average(sentence_counts),
+            "Average tokens per document": get_average(token_counts),
+            "Average types per document": get_average(type_counts),
+        },
+        index=[0],
+    )
+
+    columns = [{"name": col_name, "id": col_name} for col_name in data.columns]
+    return DataTable(
+        id="corpus-stats-avg-table",
+        data=data.to_dict("records"),
+        columns=columns,
+        style_cell={"textAlign": "left"},
+        style_table={
+            "width": "500px",
+        },
+    )
+
+
 # eventually: add a note saying umap is stochastic, so topics will
 # change for each code run (not drastically though)
 # also: maybe dont use sentencetransformers, use spacy vectors for this
@@ -198,6 +230,7 @@ def stats_tables(corpus: Corpus) -> dbc.Stack:
         [
             corpus_stats_per_doc_table(corpus),
             corpus_stats_total_table(corpus),
+            corpus_stats_avg_table(corpus),
         ],
         class_name="stats-tables",
     )
