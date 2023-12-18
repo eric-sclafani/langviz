@@ -77,7 +77,7 @@ def corpus_stats_per_doc_table(corpus: Corpus) -> DataTable:
         id="corpus-stats-per-doc-table",
         data=data.to_dict("records"),
         columns=columns,
-        page_action="none",
+        page_size=100,
         fixed_rows={"headers": True},
         style_cell={"textAlign": "left"},
         style_table={
