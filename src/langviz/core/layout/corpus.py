@@ -1,9 +1,10 @@
 """This module contains the code for the 'Corpus' tab"""
 import os
 from dataclasses import dataclass
-from typing import List, Set
+from typing import List
 
 import dash_bootstrap_components as dbc
+import numpy as np
 import pandas as pd
 import plotly.express as px
 import umap
@@ -24,26 +25,23 @@ class Corpus:
     documents: List[Document]
 
     @property
-    def sentences(self) -> list[str]:
-        all_sentences = []
-        for document in self.documents:
-            all_sentences.extend([sentence.text for sentence in document.sentences])
-        return all_sentences
+    def sentence_counts(self) -> List[int]:
+        return [len(document.sentences) for document in self.documents]
 
     @property
-    def tokens(self) -> List[str]:
-        """Returns a list of all token strings in corpus"""
-        all_tokens = []
-        for document in self.documents:
-            all_tokens.extend(document.tokens)
-        return all_tokens
+    def token_counts(self) -> List[int]:
+        return [len(document.tokens) for document in self.documents]
 
     @property
-    def types(self) -> Set[str]:
+    def type_counts(self) -> List[int]:
+        return [len(document.types) for document in self.documents]
+
+    @property
+    def total_types(self) -> int:
         all_types = {
             token_type for document in self.documents for token_type in document.types
         }
-        return all_types
+        return len(all_types)
 
     @property
     def document_ids(self) -> List[str]:
@@ -62,19 +60,19 @@ class Corpus:
 ### COMPONENT FUNCTIONS ###
 
 
-def corpus_stats_per_doc_table(corpus: Corpus) -> DataTable:
+def document_stats_overview_table(corpus: Corpus) -> DataTable:
     """Returns a table showing the per-document corpus stats"""
     data = pd.DataFrame(
         {
             "Document ID": corpus.document_ids,
-            "Sentences": [len(document.sentences) for document in corpus.documents],
-            "Tokens": [len(document.tokens) for document in corpus.documents],
-            "Types": [len(document.types) for document in corpus.documents],
+            "Sentences": corpus.sentence_counts,
+            "Tokens": corpus.token_counts,
+            "Types": corpus.type_counts,
         },
     )
     columns = [{"name": col_name, "id": col_name} for col_name in data.columns]
     return DataTable(
-        id="corpus-stats-per-doc-table",
+        id="document-stats-overview-table",
         data=data.to_dict("records"),
         columns=columns,
         page_action="none",
@@ -88,58 +86,37 @@ def corpus_stats_per_doc_table(corpus: Corpus) -> DataTable:
     )
 
 
-def corpus_stats_total_table(corpus: Corpus) -> DataTable:
-    """Returns a table showing the corpus stats totals"""
-    data = pd.DataFrame(
-        {
-            "Total documents": len(corpus.documents),
-            "Total sentences": len(corpus.sentences),
-            "Total tokens": len(corpus.tokens),
-            "Total types": len(corpus.types),
-        },
-        index=[0],
-    )
-    columns = [{"name": col_name, "id": col_name} for col_name in data.columns]
-    return DataTable(
-        id="corpus-stats-total-table",
-        data=data.to_dict("records"),
-        columns=columns,
-        style_cell={"textAlign": "left"},
-        style_table={
-            "width": "500px",
-        },
-    )
+def corpus_stats_list(corpus: Corpus) -> dbc.ListGroup:
+    def make_list_item(text: str, calculation) -> dbc.ListGroupItem:
+        return dbc.ListGroupItem(
+            [
+                html.B(text),
+                f": {calculation}",
+            ],
+            class_name="p-0",
+        )
 
-
-def corpus_stats_avg_table(corpus: Corpus) -> DataTable:
-    """"""
-
-    def get_average(items: List[int]) -> float:
-        """Returns the average of a container of integers"""
-        return sum(items) / len(items)
-
-    sentence_counts = [len(document.sentences) for document in corpus.documents]
-    token_counts = [len(document.tokens) for document in corpus.documents]
-    type_counts = [len(document.types) for document in corpus.documents]
-
-    data = pd.DataFrame(
-        {
-            "Average sentences per document": get_average(sentence_counts),
-            "Average tokens per document": get_average(token_counts),
-            "Average types per document": get_average(type_counts),
-        },
-        index=[0],
-    )
-
-    columns = [{"name": col_name, "id": col_name} for col_name in data.columns]
-    return DataTable(
-        id="corpus-stats-avg-table",
-        data=data.to_dict("records"),
-        columns=columns,
-        style_cell={"textAlign": "left"},
-        style_table={
-            "width": "500px",
-        },
+    return dbc.ListGroup(
+        [
+            make_list_item("Total documents", len(corpus.documents)),
+            make_list_item("Total sentences", sum(corpus.sentence_counts)),
+            make_list_item("Total tokens", sum(corpus.token_counts)),
+            make_list_item("Total types", corpus.total_types),
+            make_list_item("Mean sentence count", int(np.mean(corpus.sentence_counts))),
+            make_list_item(
+                "Median sentence count", int(np.median(corpus.sentence_counts))
+            ),
+            make_list_item(
+                "Range of sentence counts",
+                (np.min(corpus.sentence_counts), np.max(corpus.sentence_counts)),
+            ),
+            make_list_item("Mean token count", int(np.mean(corpus.token_counts))),
+            make_list_item("Median token count", int(np.median(corpus.token_counts))),
+            make_list_item(
+                "Range of token counts",
+                (np.min(corpus.token_counts), np.max(corpus.token_counts)),
+            ),
+        ],
     )
 
 
@@ -200,7 +177,6 @@ def named_entity_histogram(corpus: Corpus) -> dcc.Graph:
     return dcc.Graph(figure=fig, id="ner-histogram")
 
 
-# replace Div with dcc.Store??
 def named_entity_json_storage(corpus: Corpus):
     """
     Retrieves the jsonified named entity dataframe and stores it in
@@ -225,25 +201,14 @@ def named_entity_list():
 ### LAYOUT FUNCTIONS ###
 
 
-def stats_tables(corpus: Corpus) -> dbc.Stack:
-    return dbc.Stack(
-        [
-            corpus_stats_per_doc_table(corpus),
-            corpus_stats_total_table(corpus),
-            corpus_stats_avg_table(corpus),
-        ],
-        class_name="stats-tables",
-    )
-
-
 def layout(data: List[Document]):
     corpus = Corpus(data)
     return html.Div(
         [
             dbc.Row(
                 [
-                    dbc.Col(stats_tables(corpus)),
-                    dbc.Col(corpus_topics(corpus)),
+                    dbc.Col(document_stats_overview_table(corpus)),
+                    dbc.Col(corpus_stats_list(corpus)),
                 ],
             ),
             dbc.Row(
@@ -251,6 +216,11 @@ def layout(data: List[Document]):
                     dbc.Col(named_entity_histogram(corpus)),
                     named_entity_json_storage(corpus),
                     dbc.Col(named_entity_list()),
+                ]
+            ),
+            dbc.Row(
+                [
+                    dbc.Col(corpus_topics(corpus)),
                 ]
             ),
         ],

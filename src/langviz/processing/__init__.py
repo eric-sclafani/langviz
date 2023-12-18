@@ -44,9 +44,6 @@ def process_documents(
         """Returns a list of all token strings"""
         return [token.text for token in spacy_doc]
 
-    def get_type_strings(spacy_doc: Doc) -> Set[str]:
-        return set(token.text.lower() for token in spacy_doc)
-
     def get_sentences(spacy_doc: Doc) -> List[Span]:
         """Returns a list of all sentence objects"""
         return list(spacy_doc.sents)
@@ -59,7 +56,7 @@ def process_documents(
     all_documents = []
     for doc, doc_id in zip(docs, doc_ids):
         tokens = get_token_strings(doc)
-        types = get_type_strings(doc)
+        types = set(token.lower() for token in tokens)
         sentences = get_sentences(doc)
 
         document = Document(

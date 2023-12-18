@@ -47,7 +47,7 @@ def cli():
         help="Number of processes to use for NLP pipeline. Default is 4.",
         default=4,
         required=False,
-        type=int
+        type=int,
     )
     args = parser.parse_args()
     path = args.path
