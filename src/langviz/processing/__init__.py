@@ -10,6 +10,8 @@ from spacy.cli.download import download
 from spacy.language import Language
 from spacy.tokens import Doc, Span
 
+from langviz.utils import timer
+
 
 @dataclass
 class Document:
@@ -26,6 +28,9 @@ class Document:
 
 
 # TODO: break into smaller functions
+
+
+@timer
 def process_documents(
     data: List[str], doc_ids: List[str], n_process: int
 ) -> List[Document]:

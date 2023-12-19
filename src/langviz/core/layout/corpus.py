@@ -16,6 +16,7 @@ from dash.dash_table import DataTable
 from sentence_transformers import SentenceTransformer
 
 from langviz.processing import Document
+from langviz.utils import timer
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
@@ -60,6 +61,7 @@ class Corpus:
 ### COMPONENT FUNCTIONS ###
 
 
+@timer
 def document_stats_overview_table(corpus: Corpus) -> DataTable:
     """Returns a table showing the per-document corpus stats"""
     data = pd.DataFrame(
@@ -86,6 +88,7 @@ def document_stats_overview_table(corpus: Corpus) -> DataTable:
     )
 
 
+@timer
 def corpus_stats_list(corpus: Corpus) -> dbc.ListGroup:
     def make_list_item(text: str, calculation) -> dbc.ListGroupItem:
         return dbc.ListGroupItem(
@@ -123,6 +126,7 @@ def corpus_stats_list(corpus: Corpus) -> dbc.ListGroup:
 # eventually: add a note saying umap is stochastic, so topics will
 # change for each code run (not drastically though)
 # also: maybe dont use sentencetransformers, use spacy vectors for this
+@timer
 def corpus_topics(corpus: Corpus) -> dcc.Graph:
     """
     **Heavy WIP**
@@ -160,6 +164,7 @@ def corpus_topics(corpus: Corpus) -> dcc.Graph:
     return dcc.Graph(figure=fig)
 
 
+@timer
 def named_entity_histogram(corpus: Corpus) -> dcc.Graph:
     fig = px.histogram(
         corpus.named_entities_df,
