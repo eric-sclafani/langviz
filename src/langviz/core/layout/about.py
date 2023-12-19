@@ -11,7 +11,10 @@ def description_card(card_color: str):
 
     text = """
     Langviz is a corpus analysis toolkit for observing useful statistics and linguistic information 
-    from text data... """
+    from text data. This app is intended for anybody interested in working with corpora and wishes
+    to streamline the data EDA process via interactive visualizations. Users can explore their data
+    to determine whether it meets their criteria and is suited for their task.
+ """
 
     return dbc.Card(
         [
@@ -58,8 +61,11 @@ def motivation_card(card_color: str) -> dbc.Card:
     """Returns the 'Motivation' card inside the 'About' tab"""
 
     text = """
-    Data EDA is an essential part of the machine learning pipeline because what data you feed into a machine
-    directly corresponds to the quality of the output (garbage in, garbage out)... 
+    Data EDA is an essential part of the machine learning pipeline because of the garbage in, garbage out principle;
+    a model is only as good as the data it is trained with. This is more true for text data because language is not
+    as straight-forward as a spreadsheet of numbers. Language has nuance, long-distance dependencies, sarcasm, 
+    contextual meaning, coreferences, the list goes on and on... This inherently makes analyzing language data
+    more challenging. Thus, the idea for this application was born.
     """
 
     return dbc.Card(
@@ -74,6 +80,7 @@ def motivation_card(card_color: str) -> dbc.Card:
 
 
 def layout():
+    """Returns the layout for the 'About' tab"""
     card_color = "#E8E8E8"
     return dbc.Stack(
         [
