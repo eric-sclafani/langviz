@@ -12,11 +12,12 @@ from langviz.data_loader import data_loader
 
 def run_app(path: str, column_name: str, doc_id: Optional[str], n_process: int) -> None:
     """Initiates the application"""
+    print("hi")
     app = Dash(__name__, external_stylesheets=[dbc.themes.MORPH])
     data = data_loader(path, column_name, doc_id, n_process)
     app.layout = layout.layout(data)
     callbacks.get_callbacks(app)
-    app.run(debug=True)
+    app.run()
 
 
 def cli():

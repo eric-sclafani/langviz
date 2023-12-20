@@ -8,7 +8,7 @@ This document contains items on the immediate horizon. Check the README for a li
 
 - Procure a good example dataset or three and showcase Langviz in the repository in an `examples/` dir
 
-- Figure out why printing to console in the CLI function prints things out two times
+- Add status update terminal messages
 
 ## Optimization
 

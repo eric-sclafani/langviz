@@ -66,7 +66,10 @@ def get_doc_ids(data: pd.DataFrame, doc_id: Optional[str]) -> List[str]:
     )
 
 
-def data_loader(path: str, column_name: str, doc_id: Optional[str], n_process: int) -> List[Document]:
+# TODO: improve CLI argument handling
+def data_loader(
+    path: str, column_name: str, doc_id: Optional[str], n_process: int
+) -> List[Document]:
     """Loads the user's data from path and extracts text data from provided column"""
     df = load_from_path(path)
     text_data = get_text_column_data(df, column_name)

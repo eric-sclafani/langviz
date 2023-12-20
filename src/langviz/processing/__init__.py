@@ -36,6 +36,7 @@ def process_documents(
 ) -> List[Document]:
     """Converts each text document into Document object containing useful information"""
 
+    @timer
     def load_spacy_model(model: str) -> Language:
         """Attempts to load given spaCy model. Attempts to download if not found"""
         try:
