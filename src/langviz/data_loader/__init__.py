@@ -3,7 +3,7 @@ from typing import List, Optional
 
 import pandas as pd
 
-from langviz.processing import Document, process_documents
+from langviz.processing import Corpus, process_documents
 
 
 # TODO: improve decoding error handling, maybe cycle through different decoding options before raising error?
@@ -69,7 +69,7 @@ def get_doc_ids(data: pd.DataFrame, doc_id: Optional[str]) -> List[str]:
 # TODO: improve CLI argument handling
 def data_loader(
     path: str, column_name: str, doc_id: Optional[str], n_process: int
-) -> List[Document]:
+) -> Corpus:
     """Loads the user's data from path and extracts text data from provided column"""
     df = load_from_path(path)
     text_data = get_text_column_data(df, column_name)

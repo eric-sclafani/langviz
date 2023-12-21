@@ -2,9 +2,8 @@
 This module contains code for creating the spaCy NLP object with custom extentions
 """
 
-from typing import Callable, Iterator, Set
+from typing import Callable, Dict, List, Set
 
-import pandas as pd
 import spacy
 from spacy.cli.download import download
 from spacy.language import Language
@@ -13,17 +12,16 @@ from spacy.tokens import Doc
 ### GETTERS
 
 
-def _get_tokens(doc: Doc) -> Iterator[str]:
-    for token in doc:
-        yield token.text
+def _get_tokens(doc: Doc) -> List[str]:
+    return [token.text for token in doc]
 
 
 def _get_types(doc: Doc) -> Set[str]:
     return set(token.text for token in doc)
 
 
-def _get_entities_df(doc: Doc) -> pd.DataFrame:
-    return pd.DataFrame({"text": ent.text, "label": ent.label_} for ent in doc.ents)
+def _get_entities(doc: Doc) -> List[Dict[str, str]]:
+    return [{"text": ent.text, "label": ent.label_} for ent in doc.ents]
 
 
 # EXTENSIONS
@@ -31,7 +29,7 @@ def _get_entities_df(doc: Doc) -> pd.DataFrame:
 CUSTOM_EXTENSIONS = {
     ("tokens", _get_tokens),
     ("types", _get_types),
-    ("entities_df", _get_entities_df),
+    ("entities", _get_entities),
 }
 
 
