@@ -132,3 +132,4 @@ data/
 .virtual_documents
 notebooks/
 .DS_Store
+.langviz_cache

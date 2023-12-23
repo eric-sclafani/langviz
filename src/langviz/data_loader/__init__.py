@@ -5,6 +5,8 @@ import pandas as pd
 
 from langviz.processing import Corpus, process_documents
 
+from . import cache
+
 
 # TODO: improve decoding error handling, maybe cycle through different decoding options before raising error?
 def load_from_path(path: str) -> pd.DataFrame:
@@ -15,7 +17,6 @@ def load_from_path(path: str) -> pd.DataFrame:
 
     Raises UnicodeDecodeError if any decoding errors occur
     """
-
     try:
         if path.endswith(".csv"):
             return pd.read_csv(path)

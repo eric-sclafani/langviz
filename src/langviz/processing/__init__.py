@@ -1,5 +1,5 @@
 """
-This module contains text processing 
+This module contains functions and classes for text processing 
 """
 
 from dataclasses import dataclass
@@ -9,8 +9,9 @@ import numpy as np
 import pandas as pd
 from spacy.tokens import Doc, Span
 
-from langviz.processing.load_spacy import load_spacy_model
 from langviz.utils import timer
+
+from .load_spacy import load_spacy_model
 
 
 @dataclass
