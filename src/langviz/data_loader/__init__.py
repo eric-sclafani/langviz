@@ -1,5 +1,5 @@
 import sys
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 import pandas as pd
 
@@ -66,13 +66,11 @@ def get_doc_ids(data: pd.DataFrame, doc_id: Optional[str]) -> List[str]:
     )
 
 
-# TODO: improve CLI argument handling
-def data_loader(
-    path: str, column_name: str, doc_id: Optional[str], n_process: int
-) -> Corpus:
+def data_loader(config: Dict) -> Corpus:
     """Loads the user's data from path and extracts text data from provided column"""
-    df = load_from_path(path)
-    text_data = get_text_column_data(df, column_name)
-    doc_ids = get_doc_ids(df, doc_id)
-    processed_documents = process_documents(text_data, doc_ids, n_process)
+
+    df = load_from_path(config["path"])
+    text_data = get_text_column_data(df, config["column_name"])
+    doc_ids = get_doc_ids(df, config["id"])
+    processed_documents = process_documents(text_data, doc_ids, config["n_process"])
     return processed_documents

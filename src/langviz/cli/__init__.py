@@ -1,7 +1,7 @@
 """This file contains the CLI function for Langviz"""
 
 import argparse
-from typing import List, Optional
+from typing import Dict
 
 import dash_bootstrap_components as dbc
 from dash import Dash
@@ -10,17 +10,17 @@ from langviz.core import callbacks, layout
 from langviz.data_loader import data_loader
 
 
-def run_app(path: str, column_name: str, doc_id: Optional[str], n_process: int) -> None:
+def run_app(args: Dict) -> None:
     """Initiates the application"""
     app = Dash(__name__, external_stylesheets=[dbc.themes.MORPH])
-    data = data_loader(path, column_name, doc_id, n_process)
+    data = data_loader(args)
     app.layout = layout.layout(data)
     callbacks.get_callbacks(app)
     app.run()
 
 
 def cli():
-    """CLI handler"""
+    """Handles the CLI args and passes them into the application."""
     parser = argparse.ArgumentParser(
         description="CLI command for running the Langviz software"
     )
@@ -39,7 +39,7 @@ def cli():
     parser.add_argument(
         "-i",
         "--id",
-        help="Unique row identifer. Must exist in dataset already",
+        help="Unique row identifer. Must exist in dataset already.",
         required=False,
     )
     parser.add_argument(
@@ -49,10 +49,5 @@ def cli():
         required=False,
         type=int,
     )
-    args = parser.parse_args()
-    path = args.path
-    column_name = args.column_name
-    doc_id = args.id
-    n_process = args.n_process
-
-    run_app(path, column_name, doc_id, n_process)
+    config = vars(parser.parse_args())
+    run_app(config)
