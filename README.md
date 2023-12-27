@@ -39,7 +39,6 @@ on the corpus and document levels.
 - [ ] More configuration options:
   - [ ] spacy model, can specify a certain model including custom ones
   - [ ] only use first X documents
-- [ ] Multiple languages
 - [ ] User can provide labels and additional visualizations will be made
 - [ ] Implement more knowledge graphs because knowledge graphs are cool
 
@@ -59,5 +58,9 @@ on the corpus and document levels.
 - [ ] Sentiment
 - [ ] Sentences: users can observe information about each individual sentence
   - [ ] Dependency parse knowledge graph
-  - [ ] ...
 - [ ] User can filter for documents that meet a condition or group of conditions
+
+### Optimizations
+
+- [ ] Experiment with storing user data in home dir instead of local, maybe langviz will load cache
+      and user can select with cached dataset to load?

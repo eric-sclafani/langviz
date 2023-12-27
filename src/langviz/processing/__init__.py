@@ -100,7 +100,7 @@ class Corpus:
 
 @timer
 def process_documents(data: List[str], doc_ids: List[str], n_process: int) -> Corpus:
-    """Converts each text document into Document object containing useful information"""
+    """Processes all documents into a Corpus object"""
 
     nlp = load_spacy_model("en_core_web_lg")
     docs = nlp.pipe(data, n_process=n_process)

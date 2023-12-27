@@ -6,8 +6,6 @@ This document contains items on the immediate horizon. Check the README for a li
 
 ## General
 
-- Procure a good example dataset or three and showcase Langviz in the repository in an `examples/` dir
-
 - Add status update terminal messages
 
 ## Optimization
