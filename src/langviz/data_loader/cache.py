@@ -20,13 +20,13 @@ from langviz.processing import Corpus
 
 # TODO: experiment with saving cache to user's home dir (using https://github.com/platformdirs/platformdirs)
 # Maybe langviz will present the cached options to user and they can select which one to show?
-def create_cache_dir(path_name=".langviz_cache") -> None:
-    """Creates the .langviz_cache directory if not found"""
-    cache_path = Path(path_name)
+def create_langviz_cache_dir(path=".langviz_cache") -> None:
+    """Creates the .langviz_cache if not found"""
+    cache_path = Path(path)
     cwd = Path.cwd()
     if not cache_path.exists():
         print(
-            f"Cache not found in current working directory. Saving as {cwd}/{path_name}"
+            f"Langviz cache not found in current working directory. Saving as {cwd}/{path}"
         )
         print(
             f"Note: you must run 'langviz' from the same directory as the cache, which is: '{cwd}'"
@@ -36,11 +36,21 @@ def create_cache_dir(path_name=".langviz_cache") -> None:
 
 
 # TODO: eventually support loading a directory of files (ex: a dir of .json or .csv files with the same fields)
-def get_file_name(path: str) -> str:
+def get_file_name(dataset_path: str) -> str:
     """Extracts the dataset filename from given path"""
-    file = path.split("/")[-1]
+    file = dataset_path.split("/")[-1]
     file_name = re.sub(r"\..+", "", file)  # remove file extension
     return file_name
+
+
+def create_dataset_cache_dir(dataset_path: str) -> None:
+    """Creates a cache for given dataset if not found"""
+    dataset_cache_path = Path(f".langviz_cache/{get_file_name(dataset_path)}/")
+    if not dataset_cache_path.exists():
+        print(f"Dataset cache not found. Saving as {dataset_cache_path}")
+        dataset_cache_path.mkdir()
+    else:
+        print(f"Cached data detected at '{dataset_cache_path}'")
 
 
 def pickle_corpus(cache_path: str, corpus: Corpus) -> None:
@@ -49,5 +59,6 @@ def pickle_corpus(cache_path: str, corpus: Corpus) -> None:
         pickle.dump(corpus, fout)
 
 
-def cache_handler(corpus: Corpus):
-    pass
+def cache_handler(data_path: str):
+    create_langviz_cache_dir()
+    create_dataset_cache_dir(data_path)

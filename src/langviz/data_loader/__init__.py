@@ -73,5 +73,8 @@ def data_loader(config: Dict) -> Corpus:
     df = load_from_path(config["path"])
     text_data = get_text_column_data(df, config["column_name"])
     doc_ids = get_doc_ids(df, config["id"])
+
+    cache.cache_handler(config["path"])
+    exit()
     processed_documents = process_documents(text_data, doc_ids, config["n_process"])
     return processed_documents
