@@ -70,11 +70,18 @@ def get_doc_ids(data: pd.DataFrame, doc_id: Optional[str]) -> List[str]:
 def data_loader(config: Dict) -> Corpus:
     """Loads the user's data from path and extracts text data from provided column"""
 
-    df = load_from_path(config["path"])
+    dataset_path = config["path"]
+    df = load_from_path(dataset_path)
     text_data = get_text_column_data(df, config["column_name"])
     doc_ids = get_doc_ids(df, config["id"])
 
-    cache.cache_handler(config["path"])
-    exit()
-    processed_documents = process_documents(text_data, doc_ids, config["n_process"])
-    return processed_documents
+    if cache.dataset_cache_exists(dataset_path):
+        corpus = cache.load_cached_corpus(dataset_path)
+    else:
+        corpus = process_documents(text_data, doc_ids, config["n_process"])
+        cache.save_cache(corpus, dataset_path)
+
+    import ipdb
+
+    ipdb.set_trace()
+    return corpus
