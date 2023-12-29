@@ -7,11 +7,12 @@ from typing import Dict, Iterator, List, Set
 
 import numpy as np
 import pandas as pd
+import spacy
+from spacy.cli.download import download
+from spacy.language import Language
 from spacy.tokens import Doc, Span
 
 from langviz.utils import timer
-
-from .load_spacy import load_spacy_model
 
 
 @dataclass
@@ -26,11 +27,11 @@ class Document:
 
     @property
     def tokens(self) -> List[str]:
-        return self.spacy_doc._.tokens
+        return [token.text for token in self.spacy_doc]
 
     @property
     def types(self) -> Set[str]:
-        return self.spacy_doc._.types
+        return set(token.text for token in self.spacy_doc)
 
     @property
     def vector(self) -> np.ndarray:
@@ -42,7 +43,7 @@ class Document:
 
     @property
     def named_entities(self) -> List[Dict[str, str]]:
-        return self.spacy_doc._.entities
+        return [{"text": ent.text, "label": ent.label_} for ent in self.spacy_doc.ents]
 
 
 @dataclass
@@ -83,6 +84,22 @@ class Corpus:
             all_entities.extend(doc.named_entities)
 
         return pd.DataFrame(all_entities)
+
+
+# TODO: add support for custom models
+def load_spacy_model(model: str) -> Language:
+    """
+    Attempts to load given spaCy model and apply custom extentions.
+    Will try to download model if possible and not found on system
+    """
+    try:
+        nlp = spacy.load(model)
+    except OSError:
+        print(f"spaCy model '{model}' not detected. Downloading...")
+        download(model)
+        nlp = spacy.load(model)
+    nlp.max_length = 10000000
+    return nlp
 
 
 @timer

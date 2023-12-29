@@ -25,8 +25,11 @@ def dataset_cache_exists(path: str) -> bool:
     return cache_path.exists()
 
 
+# TODO: experiment with spacy DocBin https://spacy.io/usage/saving-loading
 def load_cached_corpus(path: str) -> Corpus:
     cache_path = get_dataset_cache_path(path)
+    with open(f"{cache_path}/corpus.pkl", "rb") as fin:
+        return pickle.load(fin)
 
 
 # TODO: experiment with saving cache to user's home dir (using https://github.com/platformdirs/platformdirs)
