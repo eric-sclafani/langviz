@@ -15,8 +15,8 @@ from langviz.processing import Corpus
 # TODO: eventually support loading a directory of files (ex: a dir of .json or .csv files with the same fields)
 def get_dataset_cache_path(dataset_path: str) -> Path:
     """Extracts the dataset filename from given path"""
-    file = dataset_path.split("/")[-1]
-    file_name = re.sub(r"\..+", "", file)  # remove file extension
+    file = os.path.split(dataset_path)[1]
+    file_name = os.path.splitext(file)[0]  # remove file extension
     return Path(f".langviz_cache/{file_name}/")
 
 
