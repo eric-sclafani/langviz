@@ -80,8 +80,4 @@ def data_loader(config: Dict) -> Corpus:
     else:
         corpus = process_documents(text_data, doc_ids, config["n_process"])
         cache.save_cache(corpus, dataset_path)
-
-    import ipdb
-
-    ipdb.set_trace()
     return corpus
