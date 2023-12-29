@@ -59,8 +59,3 @@ on the corpus and document levels.
 - [ ] Sentences: users can observe information about each individual sentence
   - [ ] Dependency parse knowledge graph
 - [ ] User can filter for documents that meet a condition or group of conditions
-
-### Optimizations
-
-- [ ] Experiment with storing user data in home dir instead of local, maybe langviz will load cache
-      and user can select with cached dataset to load?

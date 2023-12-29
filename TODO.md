@@ -10,12 +10,11 @@ This document contains items on the immediate horizon. Check the README for a li
 
 ## Optimization
 
-- Caching: for each given path, Langviz will cache all calculations, so when the use provides a path langiz has seen already, it will
-  just load the cached data. This means the first load of any medium to large sized dataset will take longer, but after that, it SHOULD
-  take significantly less time to load that data. If the user provides the same path but the data has been changed (i.e. documents added, subtracted),
-  they will have to use a "--reset_cache" flag to recalculate
+- add --reset_cache arg to let user reset their cache for given path
 
-- Experiment with spaCy model sizes, processing time VS accuracy
+- Experiment with saving cache to user's home dir (or wherever caches are typically saved)
+
+- Experiment with spaCy model sizes (processing time VS accuracy), and using DocBin to create the cache if the pickle gets too large
 
 - Bertopic: instead of using sentence transformers, maybe use spaCy vectors since they're already generated
 -
