@@ -1,15 +1,14 @@
 """This module contains consolidates all four tab modules into one"""
 
-from typing import List
-
 import dash_bootstrap_components as dbc
-from dash import dcc, html
+from dash import html
 
-from langviz.processing import Document
-from . import about, corpus, document
+from langviz.processing import Corpus
+
+from . import about_tab, corpus_tab, document_tab
 
 
-def layout(data: List[Document]) -> dbc.Container:
+def layout(corpus: Corpus) -> dbc.Container:
     return dbc.Container(
         [
             html.H1("Langviz"),
@@ -17,9 +16,9 @@ def layout(data: List[Document]) -> dbc.Container:
                 id="main-tabs",
                 active_tab="corpus-tab",  # for testing purposes
                 children=[
-                    about.about_tab(),
-                    corpus.corpus_tab(data),
-                    document.document_tab(),
+                    about_tab.about_tab(),
+                    corpus_tab.corpus_tab(corpus),
+                    document_tab.document_tab(),
                 ],
             ),
         ],

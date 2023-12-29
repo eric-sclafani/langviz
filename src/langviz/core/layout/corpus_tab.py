@@ -1,6 +1,5 @@
 """This module contains the code for the 'Corpus' tab"""
 import os
-from dataclasses import dataclass
 from typing import List
 
 import dash_bootstrap_components as dbc
@@ -15,51 +14,16 @@ from dash import dcc, html
 from dash.dash_table import DataTable
 from sentence_transformers import SentenceTransformer
 
-from langviz.processing import Document
+from langviz.processing import Corpus
+from langviz.utils import timer
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
-
-
-@dataclass
-class Corpus:
-    documents: List[Document]
-
-    @property
-    def sentence_counts(self) -> List[int]:
-        return [len(document.sentences) for document in self.documents]
-
-    @property
-    def token_counts(self) -> List[int]:
-        return [len(document.tokens) for document in self.documents]
-
-    @property
-    def type_counts(self) -> List[int]:
-        return [len(document.types) for document in self.documents]
-
-    @property
-    def total_types(self) -> int:
-        all_types = {
-            token_type for document in self.documents for token_type in document.types
-        }
-        return len(all_types)
-
-    @property
-    def document_ids(self) -> List[str]:
-        return [document.doc_id for document in self.documents]
-
-    @property
-    def named_entities_df(self) -> pd.DataFrame:
-        entities = [
-            {"text": ent.text, "label": ent.label_}
-            for document in self.documents
-            for ent in document.doc.ents
-        ]
-        return pd.DataFrame(entities)
 
 
 ### COMPONENT FUNCTIONS ###
 
 
+@timer
 def document_stats_overview_table(corpus: Corpus) -> DataTable:
     """Returns a table showing the per-document corpus stats"""
     data = pd.DataFrame(
@@ -86,6 +50,7 @@ def document_stats_overview_table(corpus: Corpus) -> DataTable:
     )
 
 
+@timer
 def corpus_stats_list(corpus: Corpus) -> dbc.ListGroup:
     def make_list_item(text: str, calculation) -> dbc.ListGroupItem:
         return dbc.ListGroupItem(
@@ -120,9 +85,10 @@ def corpus_stats_list(corpus: Corpus) -> dbc.ListGroup:
     )
 
 
-# eventually: add a note saying umap is stochastic, so topics will
+# TODO: add a note saying umap is stochastic, so topics will
 # change for each code run (not drastically though)
 # also: maybe dont use sentencetransformers, use spacy vectors for this
+@timer
 def corpus_topics(corpus: Corpus) -> dcc.Graph:
     """
     **Heavy WIP**
@@ -130,7 +96,7 @@ def corpus_topics(corpus: Corpus) -> dcc.Graph:
     Performs topic modeling over corpus and returns a
     scatterplot where documents are clustered by their topic
     """
-    all_text_documents = [document.doc.text for document in corpus.documents]
+    all_text_documents = [str(doc) for doc in corpus.documents]
 
     representation_model = KeyBERTInspired()
     ctfidf_model = ClassTfidfTransformer(reduce_frequent_words=True)
@@ -160,6 +126,7 @@ def corpus_topics(corpus: Corpus) -> dcc.Graph:
     return dcc.Graph(figure=fig)
 
 
+@timer
 def named_entity_histogram(corpus: Corpus) -> dcc.Graph:
     fig = px.histogram(
         corpus.named_entities_df,
@@ -201,8 +168,7 @@ def named_entity_list():
 ### LAYOUT FUNCTIONS ###
 
 
-def layout(data: List[Document]):
-    corpus = Corpus(data)
+def layout(corpus: Corpus):
     return html.Div(
         [
             dbc.Row(
@@ -227,9 +193,9 @@ def layout(data: List[Document]):
     )
 
 
-def corpus_tab(data: List[Document]):
+def corpus_tab(corpus: Corpus):
     return dbc.Tab(
-        layout(data),
+        layout(corpus),
         label="Corpus",
         activeTabClassName="fw-bold fst-italic",
         id="corpus-tab",

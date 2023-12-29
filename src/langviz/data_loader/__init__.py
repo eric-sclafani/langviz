@@ -1,9 +1,11 @@
 import sys
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 import pandas as pd
 
-from langviz.processing import Document, process_documents
+from langviz.processing import Corpus, process_documents
+
+from . import cache
 
 
 # TODO: improve decoding error handling, maybe cycle through different decoding options before raising error?
@@ -15,7 +17,6 @@ def load_from_path(path: str) -> pd.DataFrame:
 
     Raises UnicodeDecodeError if any decoding errors occur
     """
-
     try:
         if path.endswith(".csv"):
             return pd.read_csv(path)
@@ -66,10 +67,17 @@ def get_doc_ids(data: pd.DataFrame, doc_id: Optional[str]) -> List[str]:
     )
 
 
-def data_loader(path: str, column_name: str, doc_id: Optional[str], n_process: int) -> List[Document]:
+def data_loader(config: Dict) -> Corpus:
     """Loads the user's data from path and extracts text data from provided column"""
-    df = load_from_path(path)
-    text_data = get_text_column_data(df, column_name)
-    doc_ids = get_doc_ids(df, doc_id)
-    processed_documents = process_documents(text_data, doc_ids, n_process)
-    return processed_documents
+
+    dataset_path = config["path"]
+    df = load_from_path(dataset_path)
+    text_data = get_text_column_data(df, config["column_name"])
+    doc_ids = get_doc_ids(df, config["id"])
+
+    if cache.dataset_cache_exists(dataset_path):
+        corpus = cache.load_cached_corpus(dataset_path)
+    else:
+        corpus = process_documents(text_data, doc_ids, config["n_process"])
+        cache.save_cache(corpus, dataset_path)
+    return corpus

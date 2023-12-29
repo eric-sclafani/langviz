@@ -6,6 +6,9 @@ authors = [{name="Eric Sclafani", email="eric.sclafani321@gmail.com"}]
 readme="README.md"
 dependencies=["pandas", "plotly", "dash", "dash-bootstrap-components", "spacy", "bertopic", "torch", "sentence-transformers",]
 
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
 
 [project.scripts]
 langviz = "langviz.cli:cli"

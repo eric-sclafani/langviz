@@ -1,71 +1,117 @@
 """
-This module contains text processing 
+This module contains functions and classes for text processing 
 """
 
 from dataclasses import dataclass
-from typing import List, Set
+from typing import Dict, Iterator, List, Set
 
+import numpy as np
+import pandas as pd
 import spacy
 from spacy.cli.download import download
 from spacy.language import Language
 from spacy.tokens import Doc, Span
 
+from langviz.utils import timer
+
 
 @dataclass
 class Document:
-    """Contains attributes to be used in visualization components"""
+    """Class representing extracted informaton from spaCy docs"""
 
+    spacy_doc: Doc
     doc_id: str
-    tokens: List[str]
-    types: Set[str]
-    sentences: List[Span]
-    doc: Doc
 
-    def __repr__(self):
-        return self.doc.text
+    def __str__(self):
+        return self.spacy_doc.text
+
+    @property
+    def tokens(self) -> List[str]:
+        return [token.text for token in self.spacy_doc]
+
+    @property
+    def types(self) -> Set[str]:
+        return set(token.text for token in self.spacy_doc)
+
+    @property
+    def vector(self) -> np.ndarray:
+        return np.array(self.spacy_doc.vector)
+
+    @property
+    def sentences(self) -> List[Span]:
+        return list(self.spacy_doc.sents)
+
+    @property
+    def named_entities(self) -> List[Dict[str, str]]:
+        return [{"text": ent.text, "label": ent.label_} for ent in self.spacy_doc.ents]
 
 
-# TODO: break into smaller functions
-def process_documents(
-    data: List[str], doc_ids: List[str], n_process: int
-) -> List[Document]:
-    """Converts each text document into Document object containing useful information"""
+@dataclass
+class Corpus:
 
-    def load_spacy_model(model: str) -> Language:
-        """Attempts to load given spaCy model. Attempts to download if not found"""
-        try:
-            return spacy.load(model)
-        except OSError:
-            print(f"spaCy model '{model}' not detected. Downloading...")
-            download(model)
-            return spacy.load(model)
+    """
+    Encapsulates all processed documents under one class
+    and exposes functions for getting corpus-level information
+    """
 
-    def get_token_strings(spacy_doc: Doc) -> List[str]:
-        """Returns a list of all token strings"""
-        return [token.text for token in spacy_doc]
+    documents: List[Document]
 
-    def get_sentences(spacy_doc: Doc) -> List[Span]:
-        """Returns a list of all sentence objects"""
-        return list(spacy_doc.sents)
+    @property
+    def sentence_counts(self) -> List[int]:
+        return [len(doc.sentences) for doc in self.documents]
 
-    # TODO: experiment with medium and large model time
-    nlp = load_spacy_model("en_core_web_lg")
+    @property
+    def token_counts(self) -> List[int]:
+        return [len(doc.tokens) for doc in self.documents]
+
+    @property
+    def type_counts(self) -> List[int]:
+        return [len(doc.types) for doc in self.documents]
+
+    @property
+    def total_types(self) -> int:
+        all_types = {token_type for doc in self.documents for token_type in doc.types}
+        return len(all_types)
+
+    @property
+    def document_ids(self) -> List[str]:
+        return [doc.doc_id for doc in self.documents]
+
+    @property
+    def named_entities_df(self) -> pd.DataFrame:
+        all_entities = []
+        for doc in self.documents:
+            all_entities.extend(doc.named_entities)
+
+        return pd.DataFrame(all_entities)
+
+
+# TODO: add support for custom models
+def load_spacy_model(model: str) -> Language:
+    """
+    Attempts to load given spaCy model and apply custom extentions.
+    Will try to download model if possible and not found on system
+    """
+    try:
+        nlp = spacy.load(model)
+    except OSError:
+        print(f"spaCy model '{model}' not detected. Downloading...")
+        download(model)
+        nlp = spacy.load(model)
     nlp.max_length = 10000000
+    return nlp
+
+
+@timer
+def process_documents(data: List[str], doc_ids: List[str], n_process: int) -> Corpus:
+    """Processes all documents into a Corpus object"""
+
+    nlp = load_spacy_model("en_core_web_lg")
     docs = nlp.pipe(data, n_process=n_process)
 
     all_documents = []
     for doc, doc_id in zip(docs, doc_ids):
-        tokens = get_token_strings(doc)
-        types = set(token.lower() for token in tokens)
-        sentences = get_sentences(doc)
+        all_documents.append(Document(doc, doc_id))
 
-        document = Document(
-            doc_id,
-            tokens,
-            types,
-            sentences,
-            doc,
-        )
-        all_documents.append(document)
-
-    return all_documents
+    corpus = Corpus(all_documents)
+    return corpus
