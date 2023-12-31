@@ -71,13 +71,15 @@ def data_loader(config: Dict) -> Corpus:
     """Loads the user's data from path and extracts text data from provided column"""
 
     dataset_path = config["path"]
+    
+    if cache.dataset_cache_exists(dataset_path):
+        return cache.load_cached_corpus(dataset_path)
+    
     df = load_from_path(dataset_path)
     text_data = get_text_column_data(df, config["column_name"])
     doc_ids = get_doc_ids(df, config["id"])
 
-    if cache.dataset_cache_exists(dataset_path):
-        corpus = cache.load_cached_corpus(dataset_path)
-    else:
-        corpus = process_documents(text_data, doc_ids, config["n_process"])
-        cache.save_cache(corpus, dataset_path)
+    corpus = process_documents(text_data, doc_ids, config["n_process"])
+    cache.save_cache(corpus, dataset_path)
+
     return corpus
