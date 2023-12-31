@@ -7,53 +7,43 @@ from typing import Dict, Iterator, List, Set
 
 import numpy as np
 import pandas as pd
+import spacy
+from spacy.cli.download import download
+from spacy.language import Language
 from spacy.tokens import Doc, Span
 
 from langviz.utils import timer
-
-from .load_spacy import load_spacy_model
 
 
 @dataclass
 class Document:
     """Class representing extracted informaton from spaCy docs"""
 
+    spacy_doc: Doc
     doc_id: str
-    text: str
-    vector: np.ndarray
-    tokens: List[str]
-    types: Set[str]
-    sentences: List[Span]
-    named_entities: List[Dict[str, str]]
 
-    def __repr__(self):
-        return self.text
+    def __str__(self):
+        return self.spacy_doc.text
 
     @property
-    def token_count(self) -> int:
-        """Returns the document token count"""
-        return len(self.tokens)
+    def tokens(self) -> List[str]:
+        return [token.text for token in self.spacy_doc]
 
     @property
-    def type_count(self) -> int:
-        """Returns the document type count"""
-        return len(self.types)
+    def types(self) -> Set[str]:
+        return set(token.text for token in self.spacy_doc)
 
     @property
-    def sentence_count(self) -> int:
-        """Returns the document sentence count"""
-        return len(self.sentences)
+    def vector(self) -> np.ndarray:
+        return np.array(self.spacy_doc.vector)
 
-    @classmethod
-    def from_spacy_document(cls, doc: Doc, doc_id: str):
-        """Constructs a Document object given a spaCy Doc object"""
-        text = doc.text
-        vector = np.array(doc.vector)
-        tokens = doc._.tokens
-        types = doc._.types
-        sentences = list(doc.sents)
-        named_entities = doc._.entities
-        return cls(doc_id, text, vector, tokens, types, sentences, named_entities)
+    @property
+    def sentences(self) -> List[Span]:
+        return list(self.spacy_doc.sents)
+
+    @property
+    def named_entities(self) -> List[Dict[str, str]]:
+        return [{"text": ent.text, "label": ent.label_} for ent in self.spacy_doc.ents]
 
 
 @dataclass
@@ -68,26 +58,24 @@ class Corpus:
 
     @property
     def sentence_counts(self) -> List[int]:
-        return [document.sentence_count for document in self.documents]
+        return [len(doc.sentences) for doc in self.documents]
 
     @property
     def token_counts(self) -> List[int]:
-        return [document.token_count for document in self.documents]
+        return [len(doc.tokens) for doc in self.documents]
 
     @property
     def type_counts(self) -> List[int]:
-        return [document.type_count for document in self.documents]
+        return [len(doc.types) for doc in self.documents]
 
     @property
     def total_types(self) -> int:
-        all_types = {
-            token_type for document in self.documents for token_type in document.types
-        }
+        all_types = {token_type for doc in self.documents for token_type in doc.types}
         return len(all_types)
 
     @property
     def document_ids(self) -> List[str]:
-        return [document.doc_id for document in self.documents]
+        return [doc.doc_id for doc in self.documents]
 
     @property
     def named_entities_df(self) -> pd.DataFrame:
@@ -96,6 +84,22 @@ class Corpus:
             all_entities.extend(doc.named_entities)
 
         return pd.DataFrame(all_entities)
+
+
+# TODO: add support for custom models
+def load_spacy_model(model: str) -> Language:
+    """
+    Attempts to load given spaCy model and apply custom extentions.
+    Will try to download model if possible and not found on system
+    """
+    try:
+        nlp = spacy.load(model)
+    except OSError:
+        print(f"spaCy model '{model}' not detected. Downloading...")
+        download(model)
+        nlp = spacy.load(model)
+    nlp.max_length = 10000000
+    return nlp
 
 
 @timer
@@ -107,7 +111,7 @@ def process_documents(data: List[str], doc_ids: List[str], n_process: int) -> Co
 
     all_documents = []
     for doc, doc_id in zip(docs, doc_ids):
-        all_documents.append(Document.from_spacy_document(doc, doc_id))
+        all_documents.append(Document(doc, doc_id))
 
     corpus = Corpus(all_documents)
     return corpus

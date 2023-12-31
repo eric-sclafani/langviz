@@ -5,7 +5,6 @@ This modules contains code for caching user data calculations
 import datetime
 import os
 import pickle
-import re
 from pathlib import Path
 from typing import Dict
 
@@ -16,7 +15,7 @@ from langviz.processing import Corpus
 def get_dataset_cache_path(dataset_path: str) -> Path:
     """Extracts the dataset filename from given path"""
     file = os.path.split(dataset_path)[1]
-    file_name = os.path.splitext(file)[0]  # remove file extension
+    file_name = os.path.splitext(file)[0]
     return Path(f".langviz_cache/{file_name}/")
 
 
@@ -25,8 +24,11 @@ def dataset_cache_exists(path: str) -> bool:
     return cache_path.exists()
 
 
+# TODO: experiment with spacy DocBin https://spacy.io/usage/saving-loading
 def load_cached_corpus(path: str) -> Corpus:
     cache_path = get_dataset_cache_path(path)
+    with open(f"{cache_path}/corpus.pkl", "rb") as fin:
+        return pickle.load(fin)
 
 
 # TODO: experiment with saving cache to user's home dir (using https://github.com/platformdirs/platformdirs)

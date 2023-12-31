@@ -85,7 +85,7 @@ def corpus_stats_list(corpus: Corpus) -> dbc.ListGroup:
     )
 
 
-# eventually: add a note saying umap is stochastic, so topics will
+# TODO: add a note saying umap is stochastic, so topics will
 # change for each code run (not drastically though)
 # also: maybe dont use sentencetransformers, use spacy vectors for this
 @timer
@@ -96,7 +96,7 @@ def corpus_topics(corpus: Corpus) -> dcc.Graph:
     Performs topic modeling over corpus and returns a
     scatterplot where documents are clustered by their topic
     """
-    all_text_documents = [document.text for document in corpus.documents]
+    all_text_documents = [str(doc) for doc in corpus.documents]
 
     representation_model = KeyBERTInspired()
     ctfidf_model = ClassTfidfTransformer(reduce_frequent_words=True)
