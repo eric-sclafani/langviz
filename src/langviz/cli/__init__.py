@@ -49,5 +49,12 @@ def cli():
         required=False,
         type=int,
     )
+    parser.add_argument(
+        "--reset_cache",
+        help="Option to reset cache for given dataset path",
+        required=False,
+        action="store_true",
+    )
+
     config = vars(parser.parse_args())
     run_app(config)

@@ -8,6 +8,8 @@ This document contains items on the immediate horizon. Check the README for a li
 
 - Add status update terminal messages
 
+- Organize the argparse and argument access code blocks
+
 ## Optimization
 
 - add --reset_cache arg to let user reset their cache for given path

@@ -5,8 +5,8 @@ This modules contains code for caching user data calculations
 import datetime
 import os
 import pickle
+import shutil
 from pathlib import Path
-from typing import Dict
 
 from langviz.processing import Corpus
 
@@ -47,7 +47,8 @@ def create_langviz_cache_dir() -> None:
 
 def create_dataset_cache_dir(cache_dir: Path) -> None:
     """Creates a cache for given dataset"""
-    print(f"Dataset cache not found. Saving as '{cache_dir}'")
+    if cache_dir.exists():
+        shutil.rmtree(cache_dir)
     cache_dir.mkdir()
 
 
