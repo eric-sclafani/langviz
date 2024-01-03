@@ -61,7 +61,7 @@ def cli():
         "--spacy_model",
         help="Which pretrained spaCy model to use",
         choices=["en_core_web_sm", "en_core_web_md", "en_core_web_lg"],
-        default="en_core_web_lg",
+        default="en_core_web_sm",
     )
 
     config = vars(parser.parse_args())
