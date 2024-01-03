@@ -46,7 +46,7 @@ def create_langviz_cache_dir() -> None:
 
 
 def create_dataset_cache_dir(cache_dir: Path) -> None:
-    """Creates a cache for given dataset"""
+    """Creates a cache for given dataset. If it already exists, remove it"""
     if cache_dir.exists():
         shutil.rmtree(cache_dir)
     cache_dir.mkdir()
@@ -58,9 +58,10 @@ def pickle_corpus(cache_path: Path, corpus: Corpus) -> None:
         pickle.dump(corpus, fout)
 
 
+# TODO: clean up cache code
 def save_cache(corpus: Corpus, path: str) -> None:
+    """Creates the appropriate caches and saves the given corpus to disk"""
     create_langviz_cache_dir()
-
     dataset_cache_path = get_dataset_cache_path(path)
     create_dataset_cache_dir(dataset_cache_path)
     pickle_corpus(dataset_cache_path, corpus)
