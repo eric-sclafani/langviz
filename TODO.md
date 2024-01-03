@@ -6,13 +6,13 @@ This document contains items on the immediate horizon. Check the README for a li
 
 ## General
 
+- After optimizations, update examples in examples dir
+
 - Add status update terminal messages
 
+- Organize the argparse and argument access code blocks
+
 ## Optimization
-
-- add --reset_cache arg to let user reset their cache for given path
-
-- Experiment with saving cache to user's home dir (or wherever caches are typically saved)
 
 - Experiment with spaCy model sizes (processing time VS accuracy), and using DocBin to create the cache if the pickle gets too large
 
@@ -20,6 +20,8 @@ This document contains items on the immediate horizon. Check the README for a li
 -
 - Make each component non-blocking: the application shouldn't have to wait for each component to finish,
   it will instead show a loading bar for each. `dcc.Loading` may take care of this, otherwise will need to use asynchronous functions
+
+- Experiment with saving cache to user's home dir (or wherever caches are typically saved)
 
 ## Debugging
 
