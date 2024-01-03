@@ -1,6 +1,6 @@
 # TODO
 
-This document contains items on the immediate horizon. Check the README for a list of implemented and planned features.
+This document contains items on the horizon. Check the README for a list of implemented and planned features.
 
 ---
 
@@ -12,9 +12,12 @@ This document contains items on the immediate horizon. Check the README for a li
 
 - Organize the argparse and argument access code blocks
 
-## Optimization
+## Cache
 
-- Experiment with spaCy model sizes (processing time VS accuracy), and using DocBin to create the cache if the pickle gets too large
+- Save cache to user's specific cache directory with [this](https://pypi.org/project/platformdirs/) package.
+- Save a 'metadata.json' file with useful metadata
+
+## Optimization
 
 - Bertopic: instead of using sentence transformers, maybe use spaCy vectors since they're already generated
 -

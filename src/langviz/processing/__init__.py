@@ -86,7 +86,6 @@ class Corpus:
         return pd.DataFrame(all_entities)
 
 
-# TODO: add support for custom models
 def load_spacy_model(model: str) -> Language:
     """
     Attempts to load given spaCy model and apply custom extentions.
@@ -99,14 +98,17 @@ def load_spacy_model(model: str) -> Language:
         download(model)
         nlp = spacy.load(model)
     nlp.max_length = 10000000
+    print(f"spaCy model loaded: {model}")
     return nlp
 
 
 @timer
-def process_documents(data: List[str], doc_ids: List[str], n_process: int) -> Corpus:
+def create_corpus(
+    data: List[str], doc_ids: List[str], n_process: int, spacy_model: str
+) -> Corpus:
     """Processes all documents into a Corpus object"""
 
-    nlp = load_spacy_model("en_core_web_lg")
+    nlp = load_spacy_model(spacy_model)
     docs = nlp.pipe(data, n_process=n_process)
 
     all_documents = []

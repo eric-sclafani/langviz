@@ -3,7 +3,7 @@ from typing import Dict, List, Optional
 
 import pandas as pd
 
-from langviz.processing import Corpus, process_documents
+from langviz.processing import Corpus, create_corpus
 
 from . import cache
 
@@ -71,18 +71,20 @@ def data_loader(config: Dict) -> Corpus:
     """Loads the user's data from path and extracts text data from provided column"""
 
     dataset_path = config["path"]
-    
+
     if cache.dataset_cache_exists(dataset_path) and not config["reset_cache"]:
         return cache.load_cached_corpus(dataset_path)
-      
+
     if config["reset_cache"]:
         print("Flag '--reset_cache' detected. Recalculating cache for given path")
-    
+
     df = load_from_path(dataset_path)
     text_data = get_text_column_data(df, config["column_name"])
     doc_ids = get_doc_ids(df, config["id"])
-    
-    corpus = process_documents(text_data, doc_ids, config["n_process"])
+
+    corpus = create_corpus(
+        text_data, doc_ids, config["n_process"], config["spacy_model"]
+    )
     cache.save_cache(corpus, dataset_path)
 
     return corpus

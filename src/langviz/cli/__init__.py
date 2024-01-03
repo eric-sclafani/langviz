@@ -39,7 +39,7 @@ def cli():
     parser.add_argument(
         "-i",
         "--id",
-        help="Unique row identifer. Must exist in dataset already.",
+        help="Unique row identifer. Must exist in dataset already. Generated otherwise",
         required=False,
     )
     parser.add_argument(
@@ -54,6 +54,14 @@ def cli():
         help="Option to reset cache for given dataset path",
         required=False,
         action="store_true",
+    )
+
+    parser.add_argument(
+        "-s",
+        "--spacy_model",
+        help="Which pretrained spaCy model to use",
+        choices=["en_core_web_sm", "en_core_web_md", "en_core_web_lg"],
+        default="en_core_web_lg",
     )
 
     config = vars(parser.parse_args())
