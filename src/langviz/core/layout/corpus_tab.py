@@ -23,7 +23,6 @@ os.environ["TOKENIZERS_PARALLELISM"] = "false"
 ### COMPONENT FUNCTIONS ###
 
 
-@timer
 def document_stats_overview_table(corpus: Corpus) -> DataTable:
     """Returns a table showing the per-document corpus stats"""
     data = pd.DataFrame(
@@ -50,7 +49,6 @@ def document_stats_overview_table(corpus: Corpus) -> DataTable:
     )
 
 
-@timer
 def corpus_stats_list(corpus: Corpus) -> dbc.ListGroup:
     def make_list_item(text: str, calculation) -> dbc.ListGroupItem:
         return dbc.ListGroupItem(
@@ -126,7 +124,6 @@ def corpus_topics(corpus: Corpus) -> dcc.Graph:
     return dcc.Graph(figure=fig)
 
 
-@timer
 def named_entity_histogram(corpus: Corpus) -> dcc.Graph:
     fig = px.histogram(
         corpus.named_entities_df,

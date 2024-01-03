@@ -72,13 +72,16 @@ def data_loader(config: Dict) -> Corpus:
 
     dataset_path = config["path"]
     
-    if cache.dataset_cache_exists(dataset_path):
+    if cache.dataset_cache_exists(dataset_path) and not config["reset_cache"]:
         return cache.load_cached_corpus(dataset_path)
+      
+    if config["reset_cache"]:
+        print("Flag '--reset_cache' detected. Recalculating cache for given path")
     
     df = load_from_path(dataset_path)
     text_data = get_text_column_data(df, config["column_name"])
     doc_ids = get_doc_ids(df, config["id"])
-
+    
     corpus = process_documents(text_data, doc_ids, config["n_process"])
     cache.save_cache(corpus, dataset_path)
 
