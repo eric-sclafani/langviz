@@ -37,7 +37,7 @@ on the corpus and document levels.
 ### General
 
 - [ ] More configuration options:
-  - [ ] spacy model, can specify a certain model including custom ones
+  - [x] spacy model, can specify a certain model including custom ones
   - [ ] only use first X documents
 - [ ] User can provide labels and additional visualizations will be made
 - [ ] Implement more knowledge graphs because knowledge graphs are cool
