@@ -1,9 +1,5 @@
 # Langviz
 
-# Notice
-
-This project is on hold for the forseeable future due to other life happenings. I might return to it in the future.
-
 ## What is Langviz?
 
 Langviz is an open-source corpus visualization tool designed to assist with EDA with language data. Given a corpus, the application
