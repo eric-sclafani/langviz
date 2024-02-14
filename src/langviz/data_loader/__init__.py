@@ -9,6 +9,7 @@ from . import cache
 
 
 # TODO: improve decoding error handling, maybe cycle through different decoding options before raising error?
+# TODO: debug these loading options & see if using arrow backend helps with performance
 def load_from_path(path: str) -> pd.DataFrame:
     """
     Loads the user's tabular data into a Pandas dataframe.
@@ -19,11 +20,11 @@ def load_from_path(path: str) -> pd.DataFrame:
     """
     try:
         if path.endswith(".csv"):
-            return pd.read_csv(path)
+            return pd.read_csv(path, engine="pyarrow", dtype_backend="pyarrow")
         if path.endswith(".json") or path.endswith(".jsonl"):
-            return pd.read_json(path, lines=True)
-        if path.endswith(".xlsx"):
-            return pd.read_excel(path)
+            return pd.read_json(
+                path, lines=True, engine="pyarrow", dtype_backend="pyarrow"
+            )
     except UnicodeDecodeError:
         print("Unable to decode file. Please check and preprocess your data")
         sys.exit()
