@@ -14,10 +14,9 @@ def layout(config) -> dbc.Container:
             html.H1("Langviz"),
             dbc.Tabs(
                 id="main-tabs",
-                active_tab="start-tab",
                 children=[
                     start_tab.start_tab(config),
-                    # corpus_tab.corpus_tab(corpus),
+                    corpus_tab.corpus_tab(),
                     # document_tab.document_tab(),
                 ],
             ),

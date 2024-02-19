@@ -15,7 +15,7 @@ def run_app(config: Dict) -> None:
     app = Dash(__name__, external_stylesheets=[dbc.themes.MORPH])
     # data = data_loader(config)
     app.layout = layout.layout(config)
-    # callbacks.get_callbacks(app)
+    callbacks.get_callbacks(app)
     app.run(debug=True)
 
 

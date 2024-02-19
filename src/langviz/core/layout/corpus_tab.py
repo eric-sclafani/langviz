@@ -187,11 +187,13 @@ def layout(corpus: Corpus):
     )
 
 
-def corpus_tab(corpus: Corpus):
+def corpus_tab():
     return dbc.Tab(
-        layout(corpus),
+        # layout(corpus),
+        html.H1("Hello!"),
         label="Corpus",
         activeTabClassName="fw-bold fst-italic",
         id="corpus-tab",
         tab_id="corpus-tab",
+        disabled=True,
     )
