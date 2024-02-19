@@ -3,9 +3,8 @@ from typing import Dict, List, Optional
 
 import pandas as pd
 
+from langviz.data_loader import cache
 from langviz.processing import Corpus, create_corpus
-
-from . import cache
 
 
 # TODO: improve decoding error handling, maybe cycle through different decoding options before raising error?
