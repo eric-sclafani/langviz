@@ -5,20 +5,20 @@ from dash import html
 
 from langviz.processing import Corpus
 
-from . import about_tab, corpus_tab, document_tab
+from . import corpus_tab, document_tab, start_tab
 
 
-def layout(corpus: Corpus) -> dbc.Container:
+def layout(config) -> dbc.Container:
     return dbc.Container(
         [
             html.H1("Langviz"),
             dbc.Tabs(
                 id="main-tabs",
-                active_tab="corpus-tab",  # for testing purposes
+                active_tab="start-tab",
                 children=[
-                    about_tab.about_tab(),
-                    corpus_tab.corpus_tab(corpus),
-                    document_tab.document_tab(),
+                    start_tab.start_tab(config),
+                    # corpus_tab.corpus_tab(corpus),
+                    # document_tab.document_tab(),
                 ],
             ),
         ],

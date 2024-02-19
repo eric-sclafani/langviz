@@ -10,13 +10,13 @@ from langviz.core import callbacks, layout
 from langviz.data_loader import data_loader
 
 
-def run_app(args: Dict) -> None:
+def run_app(config: Dict) -> None:
     """Initiates the application"""
     app = Dash(__name__, external_stylesheets=[dbc.themes.MORPH])
-    data = data_loader(args)
-    app.layout = layout.layout(data)
-    callbacks.get_callbacks(app)
-    app.run()
+    # data = data_loader(config)
+    app.layout = layout.layout(config)
+    # callbacks.get_callbacks(app)
+    app.run(debug=True)
 
 
 def cli():
@@ -44,7 +44,7 @@ def cli():
     )
     parser.add_argument(
         "--n_process",
-        help="Number of processes to use for NLP pipeline. Default is 4.",
+        help="Number of processes to use for spaCy NLP pipeline. Default is 4.",
         default=4,
         required=False,
         type=int,
